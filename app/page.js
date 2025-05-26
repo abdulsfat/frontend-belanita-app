@@ -9,7 +9,7 @@ export default function Home() {
   return (
       <>
         <HeroSection />
-        <TextSlide text={"Women’s rights are human rights!"} />
+          <TextSlide text={"Women’s rights are human rights!"} />
         <VisionSection />
         <CommunitySection />
       </>

@@ -29,6 +29,7 @@ export default function LoginPage() {
             />
           </div>
           <div>
+            {/* Jangan lupa validasi */}
             <label className="block text-gray-700">Password</label>
             <input
               type="password"
