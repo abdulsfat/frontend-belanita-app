@@ -48,6 +48,7 @@ export default function RegisterPage() {
             />
           </div>
           <div>
+            {/* Jangan lupa validasi */}
             <label className="block text-gray-700">Password</label>
             <input
               type="password"
@@ -58,6 +59,7 @@ export default function RegisterPage() {
             />
           </div>
           <div>
+            {/* Jangan lupa validasi */}
             <label className="block text-gray-700">Konfirmasi Password</label>
             <input
               type="password"
