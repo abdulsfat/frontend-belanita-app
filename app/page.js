@@ -1,9 +1,5 @@
-import {
-  CommunitySection,
-  HeroSection,
-  TextSlide,
-  VisionSection,
-} from "@/components";
+import {CommunitySection, HeroSection, TextSlide, VisionSection} from "@/components";
+
 
 export default function Home() {
   return (

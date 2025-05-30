@@ -1,0 +1,41 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import moment from "moment";
+import "moment/locale/id";
+
+function formatDate(dateString) {
+	return moment(dateString).format("D MMMM YYYY");
+}
+
+export function Card({
+	thumbnail,
+	title,
+						 desc,
+	slug,
+}) {
+	return (
+		<Link href={`/${slug}`} passHref>
+			<div className="w-full mt-8 lg:mt-5 cursor-pointer relative group">
+				<div className="relative h-60  overflow-hidden rounded-3xl transition-transform duration-500 ease-outquint-ease group-hover:brightness-95 group-hover:scale-[0.98]">
+					<Image
+						layout="fill"
+						// src={`${process.env.NEXT_PUBLIC_APP_URL}${thumbnail}`}
+						src={thumbnail}
+						alt="Card Image"
+						className="object-cover"
+					/>
+					<div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-30" />
+				</div>
+				<div className="mt-4">
+					<p className="font-light text-sm bg-tertiary rounded-2xl px-6 py-1 w-max">
+						{/*{formatDate(created_at.system)}*/} 25 Desember 2025
+					</p>
+					<h1 className="text-2xl mt-2">{title}</h1>
+					<h2 className="text-md leading-none font-thin mt-2">{desc}</h2>
+				</div>
+			</div>
+		</Link>
+	);
+}
