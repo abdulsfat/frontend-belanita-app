@@ -7,3 +7,4 @@ export * from "./VisionSection";
 export * from "./CommunitySection";
 export * from "./TextSlide";
 export * from "./Card";
+export * from "./ProgressBar";
