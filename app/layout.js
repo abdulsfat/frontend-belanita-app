@@ -1,6 +1,7 @@
 import { Red_Hat_Display } from "next/font/google";
 import "./globals.css";
-import { MainLayout } from "@/layout";
+import {MainLayout} from "@/layout";
+
 
 const redHatDisplay = Red_Hat_Display({ subsets: ["latin"] });
 
