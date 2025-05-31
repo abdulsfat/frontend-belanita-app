@@ -4,53 +4,57 @@ import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ProgressBar } from "@/components";
+import axios from "axios";
 
 export function HeroArticle() {
+    const [articleItems, setEventItems] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
-    // const [eventItems, setEventItems] = useState<EventsType[]>([]);
+    const [error, setError] = useState(null);
     const slideDuration = 5000;
+    const intervalRef = useRef(null);
     const router = useRouter();
-    // const intervalRef = useRef<NodeJS.Timeout | null>(null);
-    // const [error, setError] = useState<string | null>(null);
 
-    // useEffect(() => {
-    //     const fetchEventsOnFeatured = async () => {
-    //         try {
-    //             const response = await axios.get(
-    //                 `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/events/on/featured`,
-    //             );
-    //             const { data } = response.data;
-    //             setEventItems(data.slice(0, 4));
-    //         } catch (error) {
-    //             setError("Error fetching events on featured.");
-    //         }
-    //     };
-    //
-    //     fetchEventsOnFeatured();
-    // }, []);
+    useEffect(() => {
+        const fetchEventsOnFeatured = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/article`,
+                );
+                const { data } = response.data;
+                setEventItems(data.slice(0, 4));
+                console.log(response.data, "iniiiiii");
+            } catch (error) {
+                console.error(error);
+                setError("Error fetching events on featured.");
+            }
+        };
 
-    // useEffect(() => {
-    //     const startAutoplay = () => {
-    //         intervalRef.current = setInterval(() => {
-    //             setCurrentIndex(
-    //                 (prevIndex) => (prevIndex + 1) % eventItems.length,
-    //             );
-    //             setProgress(0);
-    //         }, slideDuration);
-    //     };
-    //
-    //     if (!isPaused && eventItems.length > 0) {
-    //         startAutoplay();
-    //     }
-    //
-    //     return () => {
-    //         if (intervalRef.current) {
-    //             clearInterval(intervalRef.current);
-    //         }
-    //     };
-    // }, [isPaused, eventItems.length]);
+        fetchEventsOnFeatured();
+    }, []);
+
+    useEffect(() => {
+        const startAutoplay = () => {
+            intervalRef.current = setInterval(() => {
+                setCurrentIndex(
+                    (prevIndex) => (prevIndex + 1) % articleItems.length,
+                );
+                setProgress(0);
+            }, slideDuration);
+        };
+
+        if (!isPaused && articleItems.length > 0) {
+            startAutoplay();
+        }
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [isPaused, articleItems.length]);
 
     useEffect(() => {
         if (!isPaused) {
@@ -64,91 +68,92 @@ export function HeroArticle() {
         }
     }, [isPaused, currentIndex]);
 
-    // const handleDetailClick = (link: string) => {
-    //     router.push(link);
-    // };
+    const handleDetailClick = (link) => {
+        router.push(link);
+    };
 
-    // if (error) {
-    //     return (
-    //         <section className="flex justify-center items-center h-[850px]">
-    //             <p>{error}</p>
-    //         </section>
-    //     );
-    // }
+    if (error) {
+        return (
+            <section className="flex justify-center items-center h-[850px]">
+                <p>{error}</p>
+            </section>
+        );
+    }
+
+    if (articleItems.length === 0) {
+        return (
+            <section className="flex justify-center items-center h-[850px]">
+                <p>Loading...</p>
+            </section>
+        );
+    }
 
     return (
         <section className="relative w-full h-[42rem] rounded-4xl">
             <div className="relative rounded-4xl w-full h-full overflow-hidden">
-                {/*{eventItems.map((event, index) => (*/}
+                {articleItems.map((article, index) => (
                     <div
-                        // key={event.slug}
-                        className="absolute inset-0 transition-opacity duration-1000 ease-in-out
-                        opacity-100"
-                        // ${
-                        //     index === currentIndex ?  : "opacity-0"
-                        // }`}
+                        key={article.id}
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                            index === currentIndex ? "opacity-100" : "opacity-0"
+                        }`}
                     >
                         <div className="relative w-full h-full overflow-hidden">
-                            <div
-                                className="absolute inset-0 animate-zoomInFade"
-                                // className={`absolute inset-0 ${
-                                //     index === currentIndex
-                                //         ? "animate-zoomInFade"
-                                //         : ""
-                                // }`}
-                            >
+                            <div className="absolute inset-0 animate-zoomInFade">
                                 <Image
-                                    // src={`${process.env.NEXT_PUBLIC_APP_URL}${event.thumbnail}`}
-                                    src="/img-1.svg"
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${article.image}`}
                                     alt="Title"
                                     fill
                                     className="w-full h-full object-cover"
                                 />
                             </div>
                             <div className="bg-black/40 w-full h-full absolute"></div>
-                            <div className="mb-32 absolute inset-0 flex flex-col gap-6 justify-end items-start px-5 lg:px-20 py-4">
+                            <div className="mb-12 absolute inset-0 flex flex-col gap-6 justify-end items-start px-5 lg:px-12 py-4">
                                 <div
-                                    // onClick={() =>
-                                    //     handleDetailClick(
-                                    //         `/event/${event.slug}`,
-                                    //     )
-                                    // }
+                                    onClick={() =>
+                                        handleDetailClick(
+                                            `/article/${article.slug}`,
+                                        )
+                                    }
                                     className="flex-col flex gap-6 cursor-pointer"
                                 >
-                                    <h1 className="text-white text-xl lg:text-4xl lg:w-2/3">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing.
+                                    <p className="font-light text-sm bg-primary rounded-2xl px-6 py-1 w-max">
+                                        {/* format tanggal bisa pakai dayjs atau date-fns */}
+                                        25 Desember 2025
+                                    </p>
+                                    <h1 className="text-white text-xl lg:text-6xl lg:w-2/3 leading-16">
+                                        {article.title}
                                     </h1>
-                                    <h1 className="text-white text-xl lg:text-4xl lg:w-2/3">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid architecto eligendi, quia rerum ut velit!
+                                    <h1 className="text-white font-thin text-xl lg:text-xl lg:w-2/4 leading-none">
+                                        {article.content}
                                     </h1>
                                 </div>
-                                {/*<div*/}
-                                {/*    className="flex lg:flex-row flex-col justify-between lg:items-center items-start gap-2 mt-8 w-full">*/}
-                                {/*    <ProgressBar*/}
-                                {/*        currentIndex={currentIndex}*/}
-                                {/*        progress={progress}*/}
-                                {/*        topNewsLength={eventItems.length}*/}
-                                {/*    />*/}
-                                {/*    <div*/}
-                                {/*        onClick={() =>*/}
-                                {/*            handleDetailClick(*/}
-                                {/*                `kegiatan/${event.slug}`,*/}
-                                {/*            )*/}
-                                {/*        }*/}
-                                {/*        className="lg:ms-4 flex w-full gap-2 items-center cursor-pointer"*/}
-                                {/*    >*/}
-                                {/*        <p className="text-sm font-light text-white">*/}
-                                {/*            Baca Selengkapnya*/}
-                                {/*        </p>*/}
-                                {/*        <div className="flex justify-center items-center rounded-full h-5 w-5 md:h-8 md:w-8 border border-white">*/}
-                                {/*            <ArrowRight className="h-5 w-5 text-white" />*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
+                                <div className="flex lg:flex-row flex-col justify-between lg:items-center items-start gap-2 mt-8 w-full">
+                                    <ProgressBar
+                                        currentIndex={currentIndex}
+                                        progress={progress}
+                                        topNewsLength={articleItems.length}
+                                    />
+                                    <div
+                                        onClick={() =>
+                                            handleDetailClick(
+                                                `article/${article.slug}`,
+                                            )
+                                        }
+                                        className="lg:ms-4 flex w-full gap-2 items-center cursor-pointer"
+                                    >
+                                        <p className="text-sm font-light text-white">
+                                            Baca Selengkapnya
+                                        </p>
+                                        <div className="flex justify-center items-center rounded-full h-5 w-5 md:h-8 md:w-8 border border-white">
+                                            <ArrowRight className="h-5 w-5 text-white" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                {/*))}*/}
+                ))}
             </div>
         </section>
     );
