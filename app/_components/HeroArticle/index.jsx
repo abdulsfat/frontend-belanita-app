@@ -25,7 +25,7 @@ export function HeroArticle() {
                 );
                 const { data } = response.data;
                 setEventItems(data.slice(0, 4));
-                console.log(response.data, "iniiiiii");
+                // console.log(response.data, "iniiiiii");
             } catch (error) {
                 console.error(error);
                 setError("Error fetching events on featured.");
@@ -121,14 +121,14 @@ export function HeroArticle() {
                                         {/* format tanggal bisa pakai dayjs atau date-fns */}
                                         25 Desember 2025
                                     </p>
-                                    <h1 className="text-white text-xl lg:text-6xl lg:w-2/3 leading-16">
+                                    <h1 className="text-white text-xl lg:text-5xl lg:w-2/3 leading-16">
                                         {article.title}
                                     </h1>
-                                    <h1 className="text-white font-thin text-xl lg:text-xl lg:w-2/4 leading-none">
+                                    <h1 className="text-white font-thin text-xl lg:text-lg line-clamp-2 lg:w-2/4 leading-5">
                                         {article.content}
                                     </h1>
                                 </div>
-                                <div className="flex lg:flex-row flex-col justify-between lg:items-center items-start gap-2 mt-8 w-full">
+                                <div className="flex lg:flex-row flex-col justify-between lg:items-center items-start gap-2  w-full">
                                     <ProgressBar
                                         currentIndex={currentIndex}
                                         progress={progress}
