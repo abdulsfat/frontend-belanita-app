@@ -8,3 +8,7 @@ export * from "./CommunitySection";
 export * from "./TextSlide";
 export * from "./Card";
 export * from "./ProgressBar";
+export * from "./Pagination";
+export * from "./Input";
+export * from "./Form";
+

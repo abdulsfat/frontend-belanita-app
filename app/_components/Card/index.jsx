@@ -10,9 +10,8 @@ function formatDate(dateString) {
 }
 
 export function Card({
-	thumbnail,
-	title,
-						 desc,
+	image,
+	title, content,
 	slug,
 }) {
 	return (
@@ -21,8 +20,7 @@ export function Card({
 				<div className="relative h-60  overflow-hidden rounded-3xl transition-transform duration-500 ease-outquint-ease group-hover:brightness-95 group-hover:scale-[0.98]">
 					<Image
 						layout="fill"
-						// src={`${process.env.NEXT_PUBLIC_APP_URL}${thumbnail}`}
-						src={thumbnail}
+						src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${image}`}
 						alt="Card Image"
 						className="object-cover"
 					/>
@@ -33,9 +31,10 @@ export function Card({
 						{/*{formatDate(created_at.system)}*/} 25 Desember 2025
 					</p>
 					<h1 className="text-2xl mt-2">{title}</h1>
-					<h2 className="text-md leading-none font-thin mt-2">{desc}</h2>
+					<h2 className="text-md leading-none line-clamp-3 font-thin mt-2">{content}</h2>
 				</div>
 			</div>
+
 		</Link>
 	);
 }
