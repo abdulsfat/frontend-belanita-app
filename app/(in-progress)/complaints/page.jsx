@@ -1,25 +1,26 @@
+import {Upload} from "lucide-react";
 
 export default function Complaints() {
   return (
-    <div className="bg-white py-20 px-4 sm:px-6 lg:px-8">
+    <div className=" py-20 px-4 mt-5 sm:px-6 lg:px-8 flex flex-col justify-between items-center">
       {/* banner */}
-      <div className="w-270 mx-auto">
+      <div className="w-full mx-auto">
         <img
           src="/complaints.png"
           alt="We Will Not Be Silenced"
-          className="rounded-3xl shadow-lg w-full object-cover mb-16"
+          className="rounded-3xl shadow-lg h-[32rem] w-full object-cover mb-10"
         />
       </div>
 
       {/* tulisan*/}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-20">
-        <div>
-          <h2 className="text-5xl font-semibold text-gray-900 leading-tight">
-            Your Voice Matters. <br /> We're Here to Help.
+      <div className=" w-full grid grid-flow-col grid-rows-3 gap-10 items-start mb-28 justify-between">
+        <div className="col-span-2 row-span-4">
+          <h2 className="text-7xl font-normal text-gray-900 leading-tight">
+            Your Voice Matters. We're <br /> Here to Help.
           </h2>
         </div>
-        <div>
-          <p className="text-lg text-gray-800">
+        <div className="row-span-3">
+          <p className="text-md text-gray-800">
             We are committed to providing a safe and supportive environment for all women.
             Don’t hesitate to reach out and share your concerns. Your voice is important,
             and we are here to listen, support, and take action. Together, we can make a
@@ -29,8 +30,8 @@ export default function Complaints() {
       </div>
 
       {/* isi form */}
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-semibold text-center text-gray-900 mb-2">Complaint Form</h2>
+      <div className="w-4/5 ">
+        <h2 className="text-5xl font-normal text-center text-gray-900 mb-2">Complaint Form</h2>
         <p className="text-center text-lg text-gray-700 mb-10">
           Please Fill Out the Form Below to Submit Your Complaint
         </p>
@@ -87,24 +88,8 @@ export default function Complaints() {
               <label className="block text-sm font-medium text-gray-700">Image</label>
               <div className="mt-1 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl bg-gray-100 px-4 py-6 text-center text-sm text-gray-500">
                 <div className="flex flex-col items-center justify-center text-center py-6">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="48"
-                    height="48"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-upload"
-                  >
-                    <path d="M12 3v12" />
-                    <path d="m17 8-5-5-5 5" />
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  </svg>
-          
-              <input class="w-60 bg-lime-600 text-white px-9 py-2 rounded-lg hover:bg-purple-700 transition" id="file_input" type="file"></input>
+                  <Upload className="h-8 w-8 mb-3"/>
+              <input className="w-60 bg-lime-600 text-white px-9 py-2 rounded-lg hover:bg-purple-700 transition" id="file_input" type="file"></input>
                 </div>
               </div>
             </div>
