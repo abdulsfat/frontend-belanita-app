@@ -12,7 +12,7 @@ function formatDate(dateString) {
 export function Card({
 	image,
 	title, content,
-	slug,
+	slug, created_at
 }) {
 	return (
 		<Link href={`/${slug}`} passHref>
@@ -28,7 +28,7 @@ export function Card({
 				</div>
 				<div className="mt-4">
 					<p className="font-light text-sm bg-tertiary rounded-2xl px-6 py-1 w-max">
-						{/*{formatDate(created_at.system)}*/} 25 Desember 2025
+						{created_at}
 					</p>
 					<h1 className="text-2xl mt-2">{title}</h1>
 					<h2 className="text-md leading-none line-clamp-3 font-thin mt-2">{content}</h2>

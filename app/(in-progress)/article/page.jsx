@@ -59,6 +59,7 @@ export default function Article() {
                         image={item.image}
                         title={item.title}
                         content={item.content}
+                        created_at={item.created_at}
                         slug={`article/${item.slug}`}
                     />
                 ))}
