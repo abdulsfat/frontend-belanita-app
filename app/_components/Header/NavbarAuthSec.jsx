@@ -5,7 +5,7 @@ import {ButtonEmergency} from "@/app/_components";
 import Link from "next/link";
 import {useState, useRef, useEffect} from "react";
 import {useRouter} from "next/navigation";
-import axios from "axios";
+import {logoutUser} from "@/app/_services/authService";
 
 export function NavbarAuthSec() {
     const {user, setAuth, logout} = useAuthStore();
@@ -38,24 +38,16 @@ export function NavbarAuthSec() {
     const handleLogout = async () => {
         const token = localStorage.getItem("token");
 
-        try {
-            await axios.post(
-                `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/auth/logout`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-        } catch (err) {
-            console.warn("Logout gagal/tidak valid:", err);
-        }
+        const success = await logoutUser(token);
 
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         logout();
-        router.push("/login");
+        router.push("/");
+
+        if (!success) {
+            console.warn("Logout gagal");
+        }
     };
 
 
@@ -71,7 +63,7 @@ export function NavbarAuthSec() {
                     >
                         <span className="text-secondary font-medium capitalize">{user.name}</span>
                         <img
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}storage/${user.image}`}
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${user.image}`}
                             alt="Profile"
                             className="w-8 h-8 rounded-full object-cover"
                         />
@@ -79,6 +71,15 @@ export function NavbarAuthSec() {
 
                     {menuOpen && (
                         <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg py-2 z-50">
+                            {user.role === "admin" && (
+                                <Link
+                                    href="/dashboard"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                    Dashboard
+                                </Link>
+                            )}
+
                             <Link
                                 href="/profile"
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
