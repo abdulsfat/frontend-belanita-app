@@ -12,7 +12,6 @@ export default function LoginForm() {
     const router = useRouter();
     const setAuth = useAuthStore((state) => state.setAuth);
 
-
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -35,7 +34,7 @@ export default function LoginForm() {
 
         try {
             const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/auth/login`,
+                `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/login`,
                 {
                     email: formData.email,
                     password: formData.password
@@ -48,13 +47,15 @@ export default function LoginForm() {
                 }
             );
 
-            localStorage.setItem("token", res.data.access_token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
-            setAuth(res.data.user, res.data.access_token);
+            const user = res.data.user;
+            const token = res.data.access_token;
 
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+            setAuth(user, token);
 
             alert("Login berhasil!");
-            router.push("/");
+            router.push(user.role === "admin" ? "/dashboard" : "/");
 
         } catch (error) {
             if (error.response?.status === 401) {
