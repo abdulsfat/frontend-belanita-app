@@ -11,7 +11,7 @@ const TextArea = ({
                   }) => {
   const handleChange = (e) => {
     if (onChange) {
-      onChange(e); // ✅ KIRIMKAN EVENT PENUH agar bisa destructure { name, value } di luar
+      onChange(e);
     }
   };
 
@@ -22,7 +22,7 @@ const TextArea = ({
   } else if (error) {
     textareaClasses += ` bg-transparent text-gray-400 border-gray-300 focus:border-error-300 focus:ring-3 focus:ring-error-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-error-800`;
   } else {
-    textareaClasses += ` bg-transparent text-gray-400 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800`;
+    textareaClasses += ` bg-transparent text-gray-900 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800`;
   }
 
   return (

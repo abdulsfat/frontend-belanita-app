@@ -1,24 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import InputField from "@/app/_components/Input/InputField";
-import ErrorMessage from "@/app/_components/Input/ErrorMessage";
 import useAuthStore from "@/app/_stores/authStore";
-
+import useToastStore from "@/app/_stores/toastStore";
+import { loginUser } from "@/app/_services/authService";
 
 export default function LoginForm() {
     const router = useRouter();
     const setAuth = useAuthStore((state) => state.setAuth);
+    const { showToast } = useToastStore();
 
-    const [formData, setFormData] = useState({
-        email: "",
-        password: ""
-    });
-
-    const [errors, setErrors] = useState({});
-    const [globalError, setGlobalError] = useState("");
+    const [formData, setFormData] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
@@ -28,47 +22,25 @@ export default function LoginForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});
-        setGlobalError("");
         setLoading(true);
 
         try {
-            const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/login`,
-                {
-                    email: formData.email,
-                    password: formData.password
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json"
-                    }
-                }
+            const { user, access_token } = await loginUser(
+                formData.email,
+                formData.password
             );
 
-            const user = res.data.user;
-            const token = res.data.access_token;
-
-            localStorage.setItem("token", token);
+            localStorage.setItem("token", access_token);
             localStorage.setItem("user", JSON.stringify(user));
-            setAuth(user, token);
+            setAuth(user, access_token);
 
-            alert("Login berhasil!");
+            showToast("Login berhasil!", "success");
             router.push(user.role === "admin" ? "/dashboard" : "/");
-
         } catch (error) {
             if (error.response?.status === 401) {
-                setGlobalError("Email atau password salah.");
-            } else if (error.response?.data?.errors) {
-                const backendErrors = error.response.data.errors;
-                const formatted = {};
-                for (let key in backendErrors) {
-                    formatted[key] = backendErrors[key][0];
-                }
-                setErrors(formatted);
-            } else {
-                setGlobalError("Terjadi kesalahan saat login.");
+                showToast("Email atau password salah.", "info");
+            }  else {
+                showToast("Terjadi kesalahan saat login.", "error");
             }
         } finally {
             setLoading(false);
@@ -85,7 +57,6 @@ export default function LoginForm() {
                 value={formData.email}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.email} />
 
             <InputField
                 label="Password"
@@ -95,9 +66,6 @@ export default function LoginForm() {
                 value={formData.password}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.password} />
-
-            {globalError && <p className="text-red-600 text-sm text-center">{globalError}</p>}
 
             <button
                 type="submit"

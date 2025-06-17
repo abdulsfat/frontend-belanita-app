@@ -3,61 +3,59 @@ import React, {useEffect, useRef, useState, useCallback} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {usePathname} from "next/navigation";
-import {
-    BoxCubeIcon,
-    CalenderIcon,
-    ChevronDownIcon,
-    GridIcon,
-    HorizontaLDots,
-    ListIcon,
-    PageIcon,
-    PieChartIcon,
-    PlugInIcon,
-    TableIcon,
-    UserCircleIcon,
-} from "@/app/_icons";
 import SidebarWidget from "./SidebarWidget";
 import {useSidebar} from "@/app/_context/SidebarContext";
+import {
+    ChevronDown,
+    Ellipsis,
+    EllipsisVertical,
+    Grid,
+    MessageSquareWarning,
+    Newspaper,
+    Shirt,
+    UserCircle,
+    UserIcon
+} from "lucide-react";
 
 const navItems = [
     {
-        icon: <GridIcon/>,
+        icon: <Grid/>,
         name: "Dashboard",
         path: "/dashboard",
     },
     {
-        icon: <GridIcon/>,
+        icon: <MessageSquareWarning />,
         name: "Pengaduan",
         subItems: [
-            {name: "Button Emergency", path: "/emergency", pro: false},
-            {name: "Laporan Pengaduan", path: "/pengaduan", pro: false},
+            {name: "Button Emergency", path: "/dashboard/emergency", pro: false},
+            {name: "Laporan Pengaduan", path: "/dashboard/pengaduan", pro: false},
         ],
     },
     {
-        icon: <GridIcon/>,
+        icon: <Shirt/>,
         name: "Merchendise",
         subItems: [
-            {name: "Katalog Merchendise", path: "/catalog-merch", pro: false},
-            {name: "Transactions", path: "/transactions", pro: false},
+            {name: "Katalog Merchendise", path: "/dashboard/catalog", pro: false},
+            {name: "Transactions", path: "/dashboard/transactions", pro: false},
         ],
     },
     {
         name: "Article",
-        icon: <ListIcon/>,
+        icon: <Newspaper/>,
         path: "/dashboard/articles",
     },
 
     {
         name: "List User",
-        icon: <TableIcon/>,
-        path: "/list-users",
+        icon: <UserIcon/>,
+        path: "/dashboard/list-users",
     },
 
 ];
 
 const othersItems = [
     {
-        icon: <UserCircleIcon/>,
+        icon: <UserCircle/>,
         name: "User Profile",
         path: "/dashboard/profile",
     }
@@ -100,7 +98,7 @@ const AppSidebar = () => {
                                 <span className={`menu-item-text`}>{nav.name}</span>
                             )}
                             {(isExpanded || isHovered || isMobileOpen) && (
-                                <ChevronDownIcon
+                                <ChevronDown
                                     className={`ml-auto w-5 h-5 transition-transform duration-200  ${
                                         openSubmenu?.type === menuType &&
                                         openSubmenu?.index === index
@@ -315,7 +313,7 @@ const AppSidebar = () => {
                                 {isExpanded || isHovered || isMobileOpen ? (
                                     "Menu"
                                 ) : (
-                                    <HorizontaLDots/>
+                                    <Ellipsis />
                                 )}
                             </h2>
                             {renderMenuItems(navItems, "main")}
@@ -332,7 +330,7 @@ const AppSidebar = () => {
                                 {isExpanded || isHovered || isMobileOpen ? (
                                     "Others"
                                 ) : (
-                                    <HorizontaLDots/>
+                                    <EllipsisVertical />
                                 )}
                             </h2>
                             {renderMenuItems(othersItems, "others")}

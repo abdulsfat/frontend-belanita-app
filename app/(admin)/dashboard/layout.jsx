@@ -1,13 +1,12 @@
+'use client'
+
 import AdminLayout from "@/app/_layout/AdminLayout";
 import {ThemeProvider} from "@/app/_context/ThemeContext";
 import {SidebarProvider} from "@/app/_context/SidebarContext";
 import ProtectedRoute from "@/app/_middlewares/ProtectedRoute";
-
-
-export const metadata = {
-    title: "Halaman Dashboard",
-    description: "Admin view",
-};
+import CustomToast from "@/app/_components/Toast/CustomToast";
+import React from "react";
+import useToastStore from "@/app/_stores/toastStore";
 
 
 export default function Layout({children}) {

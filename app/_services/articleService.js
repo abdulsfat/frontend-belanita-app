@@ -41,3 +41,27 @@ export const deleteArticle = async (id, token) => {
         },
     });
 };
+
+export const getArticleBySlug = async (slug, token) => {
+    const response = await axios.get(`${API_BASE_URL}/article/${slug}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data.data;
+};
+
+export const updateArticle = async (slug, token, data) => {
+    const response = await axios.post(
+        `${API_BASE_URL}/article/${slug}?_method=PUT`,
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+            },
+        }
+    );
+    return response.data.data;
+};
+

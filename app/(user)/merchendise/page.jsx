@@ -36,7 +36,7 @@ export default function Merchendise() {
 
     console.log(displayedItems)
     return (
-        <div className="py-20 px-4 mt-5 sm:px-6 lg:px-8 flex flex-col justify-between items-center">
+        <div className="py-20 px-4 mt-5 sm:px-6 lg:px-8 flex flex-col justify-between">
             {/* Banner */}
             <div className="w-full mx-auto">
                 <img

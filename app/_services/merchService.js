@@ -21,3 +21,13 @@ export const getRandomMerchExceptSlug = async (slug, limit = 3) => {
     const shuffled = filtered.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, limit);
 };
+
+export const orderMerchandise = async (token, data) => {
+    const response = await axios.post(`${API_BASE_URL}/order`, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+    });
+    return response.data.data;
+};

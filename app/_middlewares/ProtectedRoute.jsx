@@ -1,25 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/app/_stores/authStore";
+import useHasHydrated from "@/app/_hooks/useHasHydrated";
 
 export default function ProtectedRoute({ children }) {
-    const { user, token } = useAuthStore();
+    const { user, token, isLoggingOut, resetLogoutFlag } = useAuthStore();
     const router = useRouter();
-    const [checking, setChecking] = useState(true);
+    const hydrated = useHasHydrated();
 
     useEffect(() => {
+        if (!hydrated) return;
+
+        if (isLoggingOut) {
+            resetLogoutFlag();
+            return;
+        }
+
         if (!token) {
             router.replace("/login");
         } else if (user?.role !== "admin") {
             router.replace("/not-found");
-        } else {
-            setChecking(false);
         }
-    }, [token, user]);
+    }, [hydrated, token, user, isLoggingOut]);
 
-    if (checking) return null;
+    if (!hydrated) return null;
 
     return children;
 }
