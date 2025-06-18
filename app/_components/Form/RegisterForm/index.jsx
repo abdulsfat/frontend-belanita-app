@@ -3,23 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import InputField from "@/app/_components/Input/InputField";
-import ErrorMessage from "@/app/_components/Input/ErrorMessage";
-import axios from "axios";
+import useToastStore from "@/app/_stores/toastStore";
+import { registerUser } from "@/app/_services/authService";
 
 export default function RegisterForm() {
+    const router = useRouter();
+    const { showToast } = useToastStore();
+
     const [formData, setFormData] = useState({
         name: "",
         phone_number: "",
         email: "",
         address: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
     });
 
-    const [errors, setErrors] = useState({});
-    const [globalError, setGlobalError] = useState("");
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,48 +28,34 @@ export default function RegisterForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});
-        setGlobalError("");
 
         if (formData.password !== formData.confirmPassword) {
-            setErrors({ confirmPassword: "Password tidak cocok." });
+            showToast("Password tidak cocok.", "error");
             return;
         }
 
         setLoading(true);
         try {
-            const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/auth/register`,
-                {
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                    phone_number: formData.phone_number,
-                    address: formData.address
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json"
-                    }
-                }
-            );
+            await registerUser({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                phone_number: formData.phone_number,
+                address: formData.address,
+            });
 
-
-            alert("Registrasi berhasil!");
+            showToast("Registrasi berhasil!", "success");
             router.push("/login");
         } catch (error) {
             if (error.response?.status === 422) {
                 const backendErrors = error.response.data;
-                const formatted = {};
                 for (let key in backendErrors) {
-                    formatted[key] = backendErrors[key][0];
+                    showToast(backendErrors[key][0], "error");
                 }
-                setErrors(formatted);
             } else if (error.response?.data?.message) {
-                setGlobalError(error.response.data.message);
+                showToast(error.response.data.message, "error");
             } else {
-                setGlobalError("Terjadi kesalahan saat mendaftar.");
+                showToast("Terjadi kesalahan saat mendaftar.", "error");
             }
         } finally {
             setLoading(false);
@@ -86,7 +72,6 @@ export default function RegisterForm() {
                 value={formData.name}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.name} />
 
             <InputField
                 label="No Hp"
@@ -96,7 +81,6 @@ export default function RegisterForm() {
                 value={formData.phone_number}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.phone_number} />
 
             <InputField
                 label="Email"
@@ -106,7 +90,6 @@ export default function RegisterForm() {
                 value={formData.email}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.email} />
 
             <InputField
                 label="Alamat Lengkap"
@@ -116,7 +99,6 @@ export default function RegisterForm() {
                 value={formData.address}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.address} />
 
             <InputField
                 label="Password"
@@ -126,7 +108,6 @@ export default function RegisterForm() {
                 value={formData.password}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.password} />
 
             <InputField
                 label="Konfirmasi Password"
@@ -136,9 +117,6 @@ export default function RegisterForm() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
             />
-            <ErrorMessage message={errors.confirmPassword} />
-
-            {globalError && <p className="text-red-600 text-sm text-center">{globalError}</p>}
 
             <button
                 type="submit"

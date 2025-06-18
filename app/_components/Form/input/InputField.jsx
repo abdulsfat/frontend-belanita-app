@@ -9,6 +9,7 @@ const Input = ({
   onChange,
   className = "",
   min,
+                 value,
   max,
   step,
   disabled = false,
@@ -35,6 +36,7 @@ const Input = ({
       <input
         type={type}
         id={id}
+        value={value}
         name={name}
         placeholder={placeholder}
         defaultValue={defaultValue}

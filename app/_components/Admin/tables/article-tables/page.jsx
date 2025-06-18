@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { MoreDotIcon } from "@/app/_icons";
 import { Dropdown } from "@/app/_components/Admin/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/app/_components/Admin/ui/dropdown/DropdownItem";
 import React, { useEffect, useState } from "react";
@@ -14,17 +13,17 @@ import {
 } from "@/app/_components/Admin/ui/table";
 import Badge from "@/app/_components/Admin/ui/badge/Badge";
 import { deleteArticle, getArticles } from "@/app/_services/articleService";
-import { useModal } from "@/app/_hooks/useModal";
-import ArticleModal from "@/app/_components/Admin/modal/article-modal/page";
-
+import { useRouter } from "next/navigation";
+import useToastStore from "@/app/_stores/toastStore";
+import {EllipsisVertical} from "lucide-react";
 
 export default function ArticleTable() {
     const [articleItems, setArticleItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [openDropdownId, setOpenDropdownId] = useState(null);
-    const [selectedArticle, setSelectedArticle] = useState(null);
-    const [modalMode, setModalMode] = useState("edit");
-    const { isOpen, openModal, closeModal } = useModal();
+    const { showToast } = useToastStore();
+    const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+    const router = useRouter();
 
     const fetchArticlesData = async () => {
         setIsLoading(true);
@@ -32,7 +31,7 @@ export default function ArticleTable() {
             const data = await getArticles(1, 9);
             setArticleItems(data || []);
         } catch (error) {
-            console.error("Error fetching article data:", error);
+            showToast("Gagal mengambil data artikel", "error");
         } finally {
             setIsLoading(false);
         }
@@ -41,6 +40,15 @@ export default function ArticleTable() {
     useEffect(() => {
         fetchArticlesData();
     }, []);
+
+    useEffect(() => {
+        if (confirmDeleteId !== null) {
+            const timeout = setTimeout(() => {
+                setConfirmDeleteId(null);
+            }, 3000);
+            return () => clearTimeout(timeout);
+        }
+    }, [confirmDeleteId]);
 
     const toggleDropdown = (id) => {
         setOpenDropdownId((prev) => (prev === id ? null : id));
@@ -51,37 +59,24 @@ export default function ArticleTable() {
     };
 
     const handleDelete = async (id) => {
-        const confirmDelete = confirm("Yakin ingin menghapus artikel ini?");
-        if (!confirmDelete) return;
+        if (confirmDeleteId !== id) {
+            setConfirmDeleteId(id);
+            showToast("Klik lagi untuk konfirmasi hapus", "error");
+            return;
+        }
 
         try {
             const token = localStorage.getItem("token");
             await deleteArticle(id, token);
 
             closeDropdown();
-            alert("Artikel berhasil dihapus.");
+            showToast("Artikel berhasil dihapus", "success");
+            setConfirmDeleteId(null);
             fetchArticlesData();
         } catch (error) {
             console.error("Gagal menghapus artikel:", error);
-            alert("Terjadi kesalahan saat menghapus artikel.");
+            showToast("Terjadi kesalahan saat menghapus artikel", "error");
         }
-    };
-
-    const openEditModal = (item) => {
-        setSelectedArticle(item);
-        setModalMode("edit");
-        openModal();
-    };
-
-    const openViewModal = (item) => {
-        setSelectedArticle(item);
-        setModalMode("view");
-        openModal();
-    };
-
-    const handleSave = () => {
-        console.log("Saving changes...");
-        closeModal();
     };
 
     return (
@@ -91,24 +86,9 @@ export default function ArticleTable() {
                     <Table>
                         <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                             <TableRow>
-                                <TableCell
-                                    isHeader
-                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                >
-                                    Title
-                                </TableCell>
-                                <TableCell
-                                    isHeader
-                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                >
-                                    Status
-                                </TableCell>
-                                <TableCell
-                                    isHeader
-                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                >
-                                    Action
-                                </TableCell>
+                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Title</TableCell>
+                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Status</TableCell>
+                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Action</TableCell>
                             </TableRow>
                         </TableHeader>
 
@@ -117,7 +97,7 @@ export default function ArticleTable() {
                                 <TableRow key={item.id}>
                                     <TableCell className="px-5 py-4 sm:px-6 text-start">
                                         <div className="flex items-center gap-3">
-                                            <div className="max-w-full me-2 bg-pink-600  overflow-hidden ">
+                                            <div className="max-w-full me-2 overflow-hidden">
                                                 <Image
                                                     width={100}
                                                     height={80}
@@ -126,12 +106,8 @@ export default function ArticleTable() {
                                                 />
                                             </div>
                                             <div>
-                        <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">
-                          {item.title}
-                        </span>
-                                                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                          {item.author}
-                        </span>
+                                                <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.title}</span>
+                                                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{item.author}</span>
                                             </div>
                                         </div>
                                     </TableCell>
@@ -157,7 +133,7 @@ export default function ArticleTable() {
                                                 onClick={() => toggleDropdown(item.id)}
                                                 className="dropdown-toggle"
                                             >
-                                                <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
+                                                <EllipsisVertical className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
                                             </button>
                                             <Dropdown
                                                 isOpen={openDropdownId === item.id}
@@ -165,22 +141,23 @@ export default function ArticleTable() {
                                                 className="w-40 p-2"
                                             >
                                                 <DropdownItem
-                                                    onItemClick={() => openViewModal(item)}
+                                                    onItemClick={() => router.push(`/dashboard/articles/detail/${item.slug}`)}
                                                     className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 >
                                                     Detail
                                                 </DropdownItem>
+
                                                 <DropdownItem
-                                                    onItemClick={() => openEditModal(item)}
+                                                    onItemClick={() => router.push(`/dashboard/articles/edit/${item.slug}`)}
                                                     className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 >
                                                     Edit
                                                 </DropdownItem>
                                                 <DropdownItem
                                                     onItemClick={() => handleDelete(item.id)}
-                                                    className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                                    className="flex w-full font-normal text-left text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-white/5 dark:hover:text-red-400"
                                                 >
-                                                    Delete
+                                                    {confirmDeleteId === item.id ? "Klik lagi untuk hapus" : "Delete"}
                                                 </DropdownItem>
                                             </Dropdown>
                                         </div>
@@ -191,14 +168,6 @@ export default function ArticleTable() {
                     </Table>
                 </div>
             </div>
-
-            <ArticleModal
-                isOpen={isOpen}
-                onClose={closeModal}
-                item={selectedArticle}
-                onSave={handleSave}
-                mode={modalMode}
-            />
         </div>
     );
 }

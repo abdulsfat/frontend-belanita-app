@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+
 const useAuthStore = create(
     persist(
         (set) => ({
@@ -15,5 +16,16 @@ const useAuthStore = create(
         }
     )
 );
+useAuthStore.persist = {
+    ...useAuthStore.persist,
+    hasHydrated: () => {
+        try {
+            return !!localStorage.getItem("auth-storage");
+        } catch {
+            return false;
+        }
+    },
+};
+
 
 export default useAuthStore;

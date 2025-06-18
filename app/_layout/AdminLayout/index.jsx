@@ -1,17 +1,16 @@
 "use client";
-
 import React from "react";
-import {useSidebar} from "@/app/_context/SidebarContext";
+import { useSidebar } from "@/app/_context/SidebarContext";
 import AppSidebar from "@/app/_components/Admin/layout/AppSidebar";
 import Backdrop from "@/app/_components/Admin/layout/Backdrop";
 import AppHeader from "@/app/_components/Admin/layout/AppHeader";
+import CustomToast from "@/app/_components/Toast/CustomToast";
+import useToastStore from "@/app/_stores/toastStore";
 
-export default function AdminLayout({
-                                        children
-                                    }) {
+
+export default function AdminLayout({ children }) {
     const { isExpanded, isHovered, isMobileOpen } = useSidebar();
-
-    // Dynamic class for main content margin based on sidebar state
+    const {toast, hideToast} = useToastStore();
     const mainContentMargin = isMobileOpen
         ? "ml-0"
         : isExpanded || isHovered
@@ -19,17 +18,17 @@ export default function AdminLayout({
             : "lg:ml-[90px]";
 
     return (
-        <div className="min-h-screen xl:flex">
-            {/* Sidebar and Backdrop */}
+        <div className="min-h-screen xl:flex dark:bg-gray-900">
+            <CustomToast
+                isOpen={toast.isOpen}
+                message={toast.message}
+                status={toast.status}
+                onClose={hideToast}
+            />
             <AppSidebar />
             <Backdrop />
-            {/* Main Content Area */}
-            <div
-                className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
-            >
-                {/* Header */}
+            <div className={`flex-1 transition-all duration-300 ease-in-out ${mainContentMargin}`}>
                 <AppHeader />
-                {/* Page Content */}
                 <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
             </div>
         </div>

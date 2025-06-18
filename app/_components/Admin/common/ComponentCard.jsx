@@ -6,8 +6,9 @@ const ComponentCard = ({
                            children,
                            className = "",
                            desc = "",
-                           create,
+                           action,
                            onclick,
+                           startIcon,
                        }) => {
     return (
         <div
@@ -24,10 +25,10 @@ const ComponentCard = ({
                         </p>
                     )}
                 </div>
-                {create && (
+                {action && (
                     <div className="px-6 py-5">
-                        <Button onClick={onclick} size="sm">
-                            {create}
+                        <Button startIcon={startIcon} onClick={onclick} size="sm">
+                            {action}
                         </Button>
                     </div>
                 )}
