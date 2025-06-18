@@ -1,23 +1,24 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import UserMetaCard from "@/app/_components/Admin/user-profile/UserMetaCard";
 import useAuthStore from "@/app/_stores/authStore";
 import ComplaintTable from "@/app/_components/Admin/tables/complaint-tables/page";
-import {getAllComplaints, getUserComplaints} from "@/app/_services/complaintService";
-
-
+import {
+    getAllComplaints,
+    getUserComplaints
+} from "@/app/_services/complaintService";
 
 export default function Profile() {
-
-    const { user } = useAuthStore();
+    const { user, token } = useAuthStore();
     const [complaints, setComplaints] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchComplaints = async () => {
+        if (!token) return;
+
         setLoading(true);
         try {
-            const token = localStorage.getItem("token");
             const data =
                 user?.role === "admin"
                     ? await getAllComplaints(token)
@@ -33,7 +34,7 @@ export default function Profile() {
 
     useEffect(() => {
         fetchComplaints();
-    }, []);
+    }, [token]);
 
     if (!user) {
         return (
@@ -59,7 +60,7 @@ export default function Profile() {
                 </div>
             </div>
             {loading ? (
-                <p>Loading...</p>
+                <p className="text-center text-gray-500 mt-6">Memuat data pengaduan...</p>
             ) : (
                 <ComplaintTable complaints={complaints} />
             )}

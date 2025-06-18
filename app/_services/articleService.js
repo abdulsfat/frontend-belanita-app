@@ -1,4 +1,3 @@
-// services/articleService.js
 import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
@@ -35,11 +34,7 @@ export const getRandomArticlesExceptSlug = async (slug, limit = 3) => {
 
 
 export const deleteArticle = async (id, token) => {
-    return axios.delete(`${API_BASE_URL}/article/${id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    return axios.delete(`${API_BASE_URL}/article/${id}`);
 };
 
 export const getArticleBySlug = async (slug, token) => {
@@ -57,7 +52,6 @@ export const updateArticle = async (slug, token, data) => {
         data,
         {
             headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "multipart/form-data",
             },
         }

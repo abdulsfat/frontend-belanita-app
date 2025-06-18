@@ -6,15 +6,19 @@ import useAuthStore from "@/app/_stores/authStore";
 import Footer from "@/app/_components/Footer";
 import CustomToast from "@/app/_components/Toast/CustomToast";
 import useToastStore from "@/app/_stores/toastStore";
+import {restoreAuth} from "@/app/_services/authService";
+import CreateArticleModal from "@/app/_components/modal/CreateArticleModal";
+import {useModal} from "@/app/_hooks/useModal";
+import {getModalComponent} from "@/data";
 
 export const UserLayout = ({ children }) => {
-    const setAuth = useAuthStore((state) => state.setAuth);
     const { toast, hideToast } = useToastStore();
+    const { isOpen, modalType, modalData, closeModal } = useModal();
+    const { token } = useAuthStore();
+    const { showToast } = useToastStore();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (token) setAuth(user, token);
+        restoreAuth();
     }, []);
 
     return (
@@ -28,6 +32,14 @@ export const UserLayout = ({ children }) => {
             <Header />
             <main>{children}</main>
              <Footer />
+            {isOpen &&
+                getModalComponent(modalType, {
+                    isOpen,
+                    onClose: closeModal,
+                    ...modalData,
+                    token,
+                    showToast,
+                })}
         </div>
     );
 };

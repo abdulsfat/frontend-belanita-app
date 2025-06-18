@@ -3,6 +3,8 @@ const nextConfig = {
     reactStrictMode: true,
     images: {
         domains: ["127.0.0.1", "localhost"],
+        // domains: ["192.168.18.204"],
+
     },
     webpack(config) {
         config.module.rules.push({

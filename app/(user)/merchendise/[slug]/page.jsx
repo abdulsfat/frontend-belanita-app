@@ -3,67 +3,41 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Card, TextSlide } from "@/components";
-import { getDetailMerch, getRandomMerchExceptSlug, orderMerchandise } from "@/app/_services/merchService";
+import { getDetailMerch, getRandomMerchExceptSlug } from "@/app/_services/merchService";
 import useAuthStore from "@/app/_stores/authStore";
 import Button from "@/app/_components/Admin/ui/button/Button";
-import CheckoutModal from "@/app/_components/Modal/CheckoutModal";
 import CustomToast from "@/app/_components/Toast/CustomToast";
+import {useModal} from "@/app/_hooks/useModal";
+import useToastStore from "@/app/_stores/toastStore";
 
 export default function DetailMerchandisePage() {
     const { slug } = useParams();
     const { token, user } = useAuthStore();
+    const { isOpen, openModal, closeModal } = useModal();
+    const { toast, showToast, hideToast } = useToastStore();
 
     const [merch, setMerch] = useState(null);
     const [relatedMerch, setRelatedMerch] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [quantity, setQuantity] = useState(1);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [toastOpen, setToastOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const detail = await getDetailMerch(slug);
-                setMerch(detail);
-
-                const others = await getRandomMerchExceptSlug(slug);
-                setRelatedMerch(others);
-            } catch (error) {
-                console.error("Gagal mengambil data merch:", error.response?.data || error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (slug) fetchData();
-    }, [slug]);
-
-    const handleOrderConfirm = async () => {
+    const fetchMerch = async () => {
         try {
-            if (!token) {
-                alert("Silakan login terlebih dahulu.");
-                return;
-            }
-
-            if (quantity < 1 || quantity > merch.stock) {
-                alert("Jumlah pesanan tidak valid.");
-                return;
-            }
-
-            const payload = {
-                quantity,
-                merchandise_id: merch.id,
-            };
-
-            await orderMerchandise(token, payload);
-            alert("Pesanan berhasil dibuat!");
-            setIsModalOpen(false);
+            const detail = await getDetailMerch(slug);
+            setMerch(detail);
         } catch (error) {
-            console.error("Gagal order:", error.response?.data || error.message);
-            alert("Gagal melakukan pesanan.");
+            showToast("Gagal mengambil data merch", error)
+        } finally {
+            setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (slug) {
+            fetchMerch();
+            getRandomMerchExceptSlug(slug).then(setRelatedMerch);
+        }
+    }, [slug]);
 
     if (loading) return <div className="text-center py-20">Loading...</div>;
     if (!merch) return <div className="text-center py-20 text-red-500">Merchandise tidak ditemukan.</div>;
@@ -88,7 +62,7 @@ export default function DetailMerchandisePage() {
                     <p className="text-xl font-semibold text-secondary mb-1">
                         Rp {Number(merch.price).toLocaleString("id-ID")}
                     </p>
-                        <p className="text-gray-800 font-medium mb-4">Stok: {merch.stock} </p>
+                    <p className="text-gray-800 font-medium mb-4">Stok: {merch.stock} </p>
                     <div className="mb-4">
                         <p className="text-md text-gray-500 whitespace-pre-line leading-6">
                             {merch.description}
@@ -101,10 +75,15 @@ export default function DetailMerchandisePage() {
                         size="sm"
                         onClick={() => {
                             if (!token) {
-                                setToastOpen(true);
+                                showToast("Anda harus login terlebih dahulu", "error");
                                 return;
                             }
-                            setIsModalOpen(true);
+
+                            openModal("CHECKOUT", {
+                                merch,
+                                user,
+                                refetchMerch: fetchMerch,
+                            });
                         }}
                     >
                         Checkout
@@ -127,21 +106,11 @@ export default function DetailMerchandisePage() {
                 ))}
             </section>
 
-            {/* Modal Checkout */}
-            <CheckoutModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onConfirm={handleOrderConfirm}
-                merch={merch}
-                user={user}
-                quantity={quantity}
-                setQuantity={setQuantity}
-            />
-
             <CustomToast
-                message="Anda harus login terlebih dahulu"
-                isOpen={toastOpen}
-                onClose={() => setToastOpen(false)}
+                message={toast.message}
+                isOpen={toast.isOpen}
+                status={toast.status}
+                onClose={hideToast}
             />
         </div>
     );

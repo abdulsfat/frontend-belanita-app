@@ -1,8 +1,5 @@
 import {Red_Hat_Display} from "next/font/google";
 import "./globals.css";
-import CustomToast from "@/app/_components/Toast/CustomToast";
-import React from "react";
-import useToastStore from "@/app/_stores/toastStore";
 
 const redHatDisplay = Red_Hat_Display({subsets: ["latin"]});
 
@@ -12,10 +9,11 @@ export const metadata = {
 };
 
 export default function RootLayout({children}) {
+
+
     return (
         <html lang="en">
         <body className={`${redHatDisplay.className} dark:bg-gray-900`}>
-
         {children}
         </body>
         </html>

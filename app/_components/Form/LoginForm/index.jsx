@@ -6,6 +6,8 @@ import InputField from "@/app/_components/Input/InputField";
 import useAuthStore from "@/app/_stores/authStore";
 import useToastStore from "@/app/_stores/toastStore";
 import { loginUser } from "@/app/_services/authService";
+import axios from "axios";
+import {Eye, EyeClosed} from "lucide-react";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -13,25 +15,45 @@ export default function LoginForm() {
     const { showToast } = useToastStore();
 
     const [formData, setFormData] = useState({ email: "", password: "" });
+    const [formErrors, setFormErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+    const validate = () => {
+        const errors = {};
+        if (!formData.email) {
+            errors.email = "Email wajib diisi.";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            errors.email = "Format email tidak valid.";
+        }
+        if (!formData.password) {
+            errors.password = "Password wajib diisi.";
+        }
+        return errors;
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormErrors((prev) => ({ ...prev, [name]: "" }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        const errors = validate();
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            return;
+        }
 
+        setLoading(true);
         try {
             const { user, access_token } = await loginUser(
                 formData.email,
                 formData.password
             );
 
-            localStorage.setItem("token", access_token);
-            localStorage.setItem("user", JSON.stringify(user));
+            axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
             setAuth(user, access_token);
 
             showToast("Login berhasil!", "success");
@@ -39,7 +61,8 @@ export default function LoginForm() {
         } catch (error) {
             if (error.response?.status === 401) {
                 showToast("Email atau password salah.", "info");
-            }  else {
+            } else {
+                console.log(error);
                 showToast("Terjadi kesalahan saat login.", "error");
             }
         } finally {
@@ -49,23 +72,44 @@ export default function LoginForm() {
 
     return (
         <form className="space-y-4" onSubmit={handleSubmit}>
-            <InputField
-                label="Email"
-                type="email"
-                name="email"
-                placeholder="Masukkan email"
-                value={formData.email}
-                onChange={handleChange}
-            />
+            <div>
+                <InputField
+                    label="Email"
+                    type="email"
+                    name="email"
+                    placeholder="Masukkan email"
+                    value={formData.email}
+                    onChange={handleChange}
+                />
+                {formErrors.email && (
+                    <p className="text-sm text-red-500 mt-1">{formErrors.email}</p>
+                )}
+            </div>
 
-            <InputField
-                label="Password"
-                type="password"
-                name="password"
-                placeholder="Masukkan password"
-                value={formData.password}
-                onChange={handleChange}
-            />
+            <div>
+                <div className="relative">
+                    <InputField
+                        label="Password"
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="Masukkan password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 bottom-[10px] text-sm text-gray-500 hover:text-gray-800"
+                    >
+                        {showPassword ?
+                            <EyeClosed />
+                            : <Eye />}
+                    </button>
+                </div>
+                {formErrors.password && (
+                    <p className="text-sm text-red-500 mt-1">{formErrors.password}</p>
+                )}
+            </div>
 
             <button
                 type="submit"
