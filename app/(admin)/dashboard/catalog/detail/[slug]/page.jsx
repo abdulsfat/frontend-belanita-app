@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getDetailMerch, getMerchCategoriesId } from "@/app/_services/merchService";
+import { getDetailMerch, getCategories } from "@/app/_services/merchService";
 import Label from "@/app/_components/Form/Label";
 import CustomToast from "@/app/_components/Toast/CustomToast";
 import Image from "next/image";
@@ -17,7 +17,7 @@ export default function MerchandiseDetailViewOnly() {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const [categoriesData] = await Promise.all([getMerchCategoriesId()]);
+      const [categoriesData] = await Promise.all([getCategories()]);
 
       setCategories(categoriesData);
     };
@@ -36,11 +36,6 @@ export default function MerchandiseDetailViewOnly() {
 
     if (slug) fetchMerchandise();
   }, [slug]);
-  
-  const getCategoryName = (id) => {
-    const category = categories.find((category) => category.id === id);
-    return category ? category.name : "Unknown category";
-  };
 
   if (!merchandise) return <div className="py-20 text-center">Loading...</div>;
 
@@ -67,7 +62,7 @@ export default function MerchandiseDetailViewOnly() {
         </div>
         <div className="mb-4">
           <Label>Kategori</Label>
-          <p className="mt-1 text-gray-800 dark:text-white">{getCategoryName(merchandise.merchandise_categories_id)}</p>
+          <p className="mt-1 text-gray-800 dark:text-white">{merchandise.category?.name || "Unknown product"}</p>
         </div>
         <div className="mb-4">
           <Label>Deskripsi</Label>

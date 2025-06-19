@@ -7,7 +7,7 @@ import Input from "@/app/_components/Form/input/InputField";
 import Button from "@/app/_components/Admin/ui/button/Button";
 import DropZone from "@/app/_components/Form/form-elements/DropZone";
 import TextArea from "@/app/_components/Form/input/TextArea";
-import { createMerch, getMerchCategoriesId } from "@/app/_services/merchService";
+import { createMerch, getCategories } from "@/app/_services/merchService";
 
 export default function CreateMerchandiseModal({ isOpen, onClose, token, showToast }) {
   const [categories, setCategories] = useState([]);
@@ -22,9 +22,13 @@ export default function CreateMerchandiseModal({ isOpen, onClose, token, showToa
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const [categoriesData] = await Promise.all([getMerchCategoriesId()]);
-
-      setCategories(categoriesData);
+      try {
+        const categoriesData = await getCategories();
+        console.log("Kategori berhasil diambil:", categoriesData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Gagal mengambil kategori:", error);
+      }
     };
 
     fetchCategories();
@@ -115,7 +119,9 @@ export default function CreateMerchandiseModal({ isOpen, onClose, token, showToa
                   className="block w-full px-3 py-2 mt-1 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-700 dark:bg-gray-900 dark:text-white"
                 >
                   {categories.map((category) => {
-                    <option key={category.id} value={category.id}>{category.name}</option>;
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>;
                   })}
                 </select>
               </div>

@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
 
-export const getMerch = async () => {
+export const getAllMerch = async () => {
   const response = await axios.get(`${API_BASE_URL}/merchandise`);
   return response.data.data;
 };
@@ -23,11 +23,10 @@ export const createMerch = async (token, data) => {
   return response.data.data;
 };
 
-export const getMerchCategoriesId = async (id, token) => {
-  const response = await axios.get(`${API_BASE_URL}/category/${id}`, {
+export const getCategories = async (id, token) => {
+  const response = await axios.get(`${API_BASE_URL}/category`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
   return response.data.data;
@@ -37,7 +36,6 @@ export const getMerchById = async (id, token) => {
   const response = await axios.get(`${API_BASE_URL}/merchandise/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
   return response.data.data;

@@ -4,44 +4,51 @@ import { Dropdown } from "@/app/_components/Admin/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/app/_components/Admin/ui/dropdown/DropdownItem";
 import React, { useEffect, useState } from "react";
 import { TableBody, TableCell, TableHeader, TableRow, Table } from "@/app/_components/Admin/ui/table";
-import Badge from "@/app/_components/Admin/ui/badge/Badge";
 import { EllipsisVertical } from "lucide-react";
-import useToastStore from "@/app/_stores/toastStore";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { deleteComplaint, getAllComplaints } from "@/app/_services/complaintService";
+import useToastStore from "@/app/_stores/toastStore";
+import { getAllMerch } from "@/app/_services/merchService";
+import { deleteTransaction, getAllTransaction } from "@/app/_services/transactionService";
+import Badge from "../../ui/badge/Badge";
 
-export default function ComplaintTable() {
-  const [complaints, setComplaints] = useState([]);
+export default function TransactionTable() {
+  const [transactions, setTransactions] = useState([]);
+  const [merch, setMerch] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [openDropdownId, setOpenDropdownId] = useState(null);
-  const { showToast } = useToastStore();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const { showToast } = useToastStore();
   const router = useRouter();
 
-  const fetchComplaints = async () => {
+  const fetchTransaction = async () => {
     setIsLoading(true);
     try {
-      const data = await getAllComplaints();
-      setComplaints(data || []);
+      const data = await getAllTransaction();
+      setTransactions(data || []);
     } catch (error) {
-      console.error("Error fetching complaints:", error);
+      console.error("Error fetching transactions:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchComplaints();
+    fetchTransaction();
   }, []);
 
-  const toggleDropdown = (id) => {
-    setOpenDropdownId((prev) => (prev === id ? null : id));
-  };
+  useEffect(() => {
+    const fetchMerch = async () => {
+      try {
+        const merchData = await getAllMerch();
+        console.log("Produk berhasil diambil:", merchData);
+        setMerch(merchData);
+      } catch (error) {
+        console.error("Gagal mengambil produk:", error);
+      }
+    };
 
-  const closeDropdown = () => {
-    setOpenDropdownId(null);
-  };
+    fetchMerch();
+  }, []);
 
   useEffect(() => {
     if (confirmDeleteId !== null) {
@@ -52,6 +59,14 @@ export default function ComplaintTable() {
     }
   }, [confirmDeleteId]);
 
+  const toggleDropdown = (id) => {
+    setOpenDropdownId((prev) => (prev === id ? null : id));
+  };
+
+  const closeDropdown = () => {
+    setOpenDropdownId(null);
+  };
+
   const handleDelete = async (id) => {
     if (confirmDeleteId !== id) {
       setConfirmDeleteId(id);
@@ -61,15 +76,15 @@ export default function ComplaintTable() {
 
     try {
       const token = localStorage.getItem("token");
-      await deleteComplaint(id, token);
+      await deleteTransaction(id, token);
 
       closeDropdown();
-      showToast("Pengaduan berhasil dihapus", "success");
+      showToast("Transaksi berhasil dihapus", "success");
       setConfirmDeleteId(null);
-      fetchMerch();
+      fetchTransaction();
     } catch (error) {
-      console.error("Gagal menghapus pengaduan:", error);
-      showToast("Terjadi kesalahan saat menghapus pengaduan", "error");
+      console.error("Gagal menghapus transaksi:", error);
+      showToast("Terjadi kesalahan saat menghapus transaksi", "error");
     }
   };
 
@@ -81,13 +96,16 @@ export default function ComplaintTable() {
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs">
-                  Subject
+                  Order Number
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs">
-                  Date
+                  Product
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs">
-                  Location
+                  Quantity
+                </TableCell>
+                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs">
+                  Total Price
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs">
                   Status
@@ -98,27 +116,27 @@ export default function ComplaintTable() {
               </TableRow>
             </TableHeader>
             {/* <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {complaints.map((item) => (
+              {transactions.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="px-5 py-4 text-start">
+                  <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
-                      <div className="max-w-full overflow-hidden me-2">
-                        <Image width={100} height={80} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.image}`} alt={item.subject} />
-                      </div>
                       <div>
-                        <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.subject}</span>
-                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{item.user_id}</span>
+                        <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.order_number}</span>
+                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{item.author}</span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.date}</span>
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.quantity}</span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.location}</span>
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.total_price}</span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
-                    <Badge size="sm" color={item.status === "completed" ? "success" : item.status === "processed" ? "warning" : "error"}>
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.merchandise?.name || "Unknown"}</span>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-start">
+                    <Badge size="sm" color={item.status === "completed" ? "success" : item.status === "paid" ? "warning" : "error"}>
                       {item.status}
                     </Badge>
                   </TableCell>
@@ -129,14 +147,14 @@ export default function ComplaintTable() {
                       </button>
                       <Dropdown isOpen={openDropdownId === item.id} onClose={closeDropdown} className="w-40 p-2">
                         <DropdownItem
-                          onItemClick={() => router.push(`/dashboard/complaint/detail/${item.slug}`)}
+                          onItemClick={() => router.push(`/dashboard/transactions/detail/${item.slug}`)}
                           className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:text-gray-400 dark:hover:text-gray-300"
                         >
                           Detail
                         </DropdownItem>
                         <DropdownItem
-                          onItemClick={() => router.push(`/dashboard/complaint/edit/${item.slug}`)}
-                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:text-gray-400 dark:hover:text-gray-300"
+                          onItemClick={() => router.push(`/dashboard/transactions/edit/${item.slug}`)}
+                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                         >
                           Edit
                         </DropdownItem>
@@ -151,26 +169,26 @@ export default function ComplaintTable() {
             </TableBody> */}
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 <TableRow>
-                  <TableCell className="px-5 py-4 text-start">
+                  <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
-                      <div className="max-w-full overflow-hidden me-2">
-                        <Image width={100} height={80} src="/public/images/grid-image/image-01.png" alt="Item complaint" />
-                      </div>
                       <div>
-                        <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">Pelecehan verbal di Depok</span>
-                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">user</span>
+                        <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">ORD-0001</span>
+                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">user123</span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">18 Juni 2025</span>
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">Kaos Hitam XL</span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">Depok</span>
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">1</span>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-start">
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">60000</span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
                     <Badge size="sm" color="warning">
-                      processed
+                      paid
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
@@ -180,18 +198,18 @@ export default function ComplaintTable() {
                       </button>
                       <Dropdown isOpen="" onClose="" className="w-40 p-2">
                         <DropdownItem
-                          onItemClick=""
+                          onItemClick="{() => router.push(`/dashboard/transactions/detail/${item.slug}`)}"
                           className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:text-gray-400 dark:hover:text-gray-300"
                         >
                           Detail
                         </DropdownItem>
                         <DropdownItem
-                          onItemClick=""
-                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:text-gray-400 dark:hover:text-gray-300"
+                          onItemClick="{() => router.push(`/dashboard/transactions/edit/${item.slug}`)}"
+                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                         >
                           Edit
                         </DropdownItem>
-                        <DropdownItem onItemClick="" className="flex w-full font-normal text-left text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-white/5 dark:hover:text-red-400">
+                        <DropdownItem onItemClick="{() => handleDelete(item.id)}" className="flex w-full font-normal text-left text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-white/5 dark:hover:text-red-400">
                           Delete
                         </DropdownItem>
                       </Dropdown>

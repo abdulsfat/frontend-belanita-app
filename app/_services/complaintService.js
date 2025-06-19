@@ -34,4 +34,10 @@ export const getDetailComplaint = async (slug) => {
     return response.data.data;
 };
 
-
+export const deleteComplaint = async (id, token) => {
+  return axios.delete(`${API_BASE_URL}/complaint/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

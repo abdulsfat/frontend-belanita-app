@@ -3,17 +3,9 @@
 import React from "react";
 import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
-import ArticleTable from "@/app/_components/Admin/tables/article-tables/page";
-import { useModal } from "@/app/_hooks/useModal";
-import CreateArticleModal from "@/app/_components/modal/create-article/page";
-import useAuthStore from "@/app/_stores/authStore";
-import useToastStore from "@/app/_stores/toastStore";
-import UsersTable from "@/app/_components/Admin/tables/article-tables/page";
+import TransactionTable from "@/app/_components/Admin/tables/transaction-tables/page";
 
-export default function ListUsers() {
-    const { token } = useAuthStore();
-    const { showToast } = useToastStore();
-
+export default function ListTransaction() {
     return (
         <div>
             <PageBreadcrumb pageTitle="Transactions Dashboard" />
@@ -21,7 +13,7 @@ export default function ListUsers() {
                 <ComponentCard
                     title="List Transactions"
                 >
-                    <UsersTable />
+                    <TransactionTable />
                 </ComponentCard>
             </div>
         </div>
