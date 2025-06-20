@@ -10,6 +10,7 @@ import Label from "@/app/_components/Form/Label";
 
 export default function UserMetaCard({name, role, address, image}) {
   const { isOpen, openModal, closeModal } = useModal();
+
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");

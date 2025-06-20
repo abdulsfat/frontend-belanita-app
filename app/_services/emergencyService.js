@@ -12,6 +12,18 @@ export const getUserEmergencies = async (token) => {
     return response.data.data;
 };
 
+// export const getUserEmergencies = async (token) => {
+//     try {
+//         const response = await axios.get(`${API_BASE_URL}/emergency`);
+//         return response.data.data;
+//     } catch (error) {
+//         if (error.response?.status === 404) {
+//             return [];
+//         }
+//         throw error;
+//     }
+// };
+
 export const getEmergencyById = async (id, token) => {
     const response = await axios.get(`${API_BASE_URL}/emergency/${id}`);
     return response.data.data;
@@ -29,7 +41,7 @@ export const updateEmergencyStatus = async (id, status, token) => {
     return response.data.data;
 };
 
-export const deleteEmergencyRequest = async (id, token) => {
+export const deleteEmergencyRequest = async (id) => {
     const response = await axios.delete(`${API_BASE_URL}/emergency/${id}`);
     return response.data.message;
 };

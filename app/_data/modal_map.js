@@ -1,8 +1,8 @@
 "use client";
 
-import CreateArticleModal from "@/app/_components/modal/CreateArticleModal";
-import EmergencyModal from "@/app/_components/modal/EmergencyModal";
-import CheckoutModal from "@/app/_components/modal/CheckoutModal";
+import CreateArticleModal from "@/app/_components/Modal/CreateArticleModal";
+import EmergencyModal from "@/app/_components/Modal/EmergencyModal";
+import CheckoutModal from "@/app/_components/Modal/CheckoutModal";
 
 export const getModalComponent = (modalType, props) => {
     switch (modalType) {

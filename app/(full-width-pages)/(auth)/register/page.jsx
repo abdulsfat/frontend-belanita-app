@@ -1,16 +1,17 @@
 "use client";
 
 import RegisterForm from "@/app/_components/Form/RegisterForm";
-import GuestOnlyRoute from "@/app/_middlewares/GuestOnlyRoute";
+import useToastStore from "@/app/_stores/toastStore";
 
 export default function RegisterPage() {
+    const { showToast } = useToastStore();
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Register form submitted");
+        showToast("Registrasi berhasil!", "success");
     };
 
     return (
-        <GuestOnlyRoute>
             <div className="flex items-center justify-center min-h-screen pt-12 bg-gray-100">
                 <div className="w-full max-w-md p-6 bg-white rounded-2xl shadow-md">
                     <div className="flex justify-center">
@@ -31,6 +32,5 @@ export default function RegisterPage() {
                     </p>
                 </div>
             </div>
-        </GuestOnlyRoute>
     );
 }

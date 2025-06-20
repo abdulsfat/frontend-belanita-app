@@ -3,6 +3,7 @@
 import { Modal } from "@/app/_components/Admin/ui/modal";
 import { useEffect, useState } from "react";
 import useToastStore from "@/app/_stores/toastStore";
+import useAuthStore from "@/app/_stores/authStore";
 import { createEmergencyRequest } from "@/app/_services/emergencyService";
 
 const WHATSAPP_NUMBER = "6281517343090";
@@ -10,6 +11,7 @@ const PHONE_NUMBER = "081234567890";
 
 export default function EmergencyModal({ isOpen, onClose }) {
     const { showToast } = useToastStore();
+    const { token } = useAuthStore();
     const [location, setLocation] = useState({ lat: null, long: null });
     const [locationReady, setLocationReady] = useState(false);
 
@@ -23,14 +25,30 @@ export default function EmergencyModal({ isOpen, onClose }) {
                     });
                     setLocationReady(true);
                 },
-                () => {
-                    showToast("Gagal mengambil lokasi", "error");
+                (error) => {
+                    console.error("Lokasi error:", error);
+                    showToast("Gagal mengambil lokasi, gunakan lokasi default", "warning");
+                    setLocation({
+                        lat: -6.200000,
+                        long: 106.816666,
+                    });
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 5000,
+                    maximumAge: 0,
                 }
             );
+
         }
     }, [isOpen]);
 
     const sendToBackend = async (contacted_via) => {
+        if (!token) {
+            showToast("Silakan login terlebih dahulu untuk mengakses fitur ini", "error");
+            return;
+        }
+
         if (!location.lat || !location.long) {
             showToast("Lokasi belum siap. Mohon tunggu sebentar.", "error");
             return;
@@ -42,6 +60,7 @@ export default function EmergencyModal({ isOpen, onClose }) {
                 lat: location.lat,
                 long: location.long,
             });
+            showToast("Emergency request berhasil dikirim", "success");
         } catch (error) {
             console.error("Error response:", error.response?.data || error);
             showToast("Gagal mengirim data ke server", "error");
@@ -60,6 +79,8 @@ export default function EmergencyModal({ isOpen, onClose }) {
         window.open(`tel:${PHONE_NUMBER}`, "_self");
     };
 
+    const isDisabled = !token || !locationReady;
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
             <div className="no-scrollbar bg-tertiary relative w-full max-w-[700px] overflow-y-auto rounded-3xl p-4 dark:bg-gray-900 lg:p-11">
@@ -74,9 +95,9 @@ export default function EmergencyModal({ isOpen, onClose }) {
                     <div className="flex flex-col items-center gap-3 text-sm">
                         <button
                             onClick={handleWhatsAppClick}
-                            disabled={!locationReady}
+                            disabled={isDisabled}
                             className={`transition ease-in-out rounded-2xl w-full text-start p-4 border-2 border-secondary ${
-                                !locationReady ? "opacity-50 cursor-not-allowed" : "hover:bg-lime-950/5"
+                                isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-lime-950/5"
                             }`}
                         >
                             <h1 className="text-lg mb-2">Chat via WhatsApp</h1>
@@ -86,9 +107,9 @@ export default function EmergencyModal({ isOpen, onClose }) {
                         </button>
                         <button
                             onClick={handlePhoneClick}
-                            disabled={!locationReady}
+                            disabled={isDisabled}
                             className={`transition ease-in-out rounded-2xl w-full text-start p-4 border-2 border-secondary ${
-                                !locationReady ? "opacity-50 cursor-not-allowed" : "hover:bg-lime-950/5"
+                                isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-lime-950/5"
                             }`}
                         >
                             <h1 className="text-lg mb-2">Direct Phone Call</h1>

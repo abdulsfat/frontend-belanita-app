@@ -6,7 +6,6 @@ import Backdrop from "@/app/_components/Admin/layout/Backdrop";
 import AppHeader from "@/app/_components/Admin/layout/AppHeader";
 import CustomToast from "@/app/_components/Toast/CustomToast";
 import useToastStore from "@/app/_stores/toastStore";
-import {restoreAuth} from "@/app/_services/authService";
 import {getModalComponent} from "@/data";
 import {useModal} from "@/app/_hooks/useModal";
 import useAuthStore from "@/app/_stores/authStore";
@@ -24,9 +23,6 @@ export default function AdminLayout({ children }) {
             ? "lg:ml-[290px]"
             : "lg:ml-[90px]";
 
-    useEffect(() => {
-        restoreAuth();
-    }, []);
     return (
         <div className="min-h-screen xl:flex dark:bg-gray-900">
             <CustomToast

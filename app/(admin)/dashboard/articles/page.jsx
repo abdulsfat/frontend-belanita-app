@@ -11,7 +11,7 @@ import { getArticles } from "@/app/_services/articleService";
 import useArticleStore from "@/app/_stores/articleStore";
 
 export default function ListArticle() {
-    const { articles, setArticles } = useArticleStore();
+    const { setArticles } = useArticleStore();
     const { token } = useAuthStore();
     const { showToast } = useToastStore();
     const { openModal } = useModal();
@@ -23,6 +23,7 @@ export default function ListArticle() {
         };
         fetch();
     }, []);
+
     const openCreateModal = () => {
         openModal("CREATE_ARTICLE", {
             token,

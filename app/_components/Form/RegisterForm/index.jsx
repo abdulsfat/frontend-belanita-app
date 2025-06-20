@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import InputField from "@/app/_components/Input/InputField";
 import useToastStore from "@/app/_stores/toastStore";
 import { registerUser } from "@/app/_services/authService";
 import {Eye, EyeClosed} from "lucide-react";
+import InputField from "@/app/_components/Form/input/InputField";
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -135,7 +135,7 @@ export default function RegisterForm() {
                         type={showPassword ? "text" : "password"}
                         name="confirmPassword"
                         placeholder="Ulangi password"
-                        value={formData.password}
+                        value={formData.confirmPassword}
                         onChange={handleChange}
                     />
                     <button
