@@ -1,29 +1,19 @@
 "use client";
 
 import useAuthStore from "@/app/_stores/authStore";
-import {ButtonEmergency} from "@/app/_components";
+import { ButtonEmergency } from "@/app/_components";
 import Link from "next/link";
-import {useState, useRef, useEffect} from "react";
-import {useRouter} from "next/navigation";
-import {logoutUser} from "@/app/_services/authService";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { logoutUser } from "@/app/_services/authService";
+import useToastStore from "@/app/_stores/toastStore";
 
 export function NavbarAuthSec() {
-    const {user, setAuth, logout} = useAuthStore();
+    const { user, token, logout } = useAuthStore();
+    const { showToast } = useToastStore();
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
-    const [hasHydrated, setHasHydrated] = useState(false);
     const router = useRouter();
-
-    useEffect(() => {
-        const savedUser = localStorage.getItem("user");
-        const savedToken = localStorage.getItem("token");
-
-        if (savedUser && savedToken) {
-            setAuth(JSON.parse(savedUser), savedToken);
-        }
-
-        setHasHydrated(true);
-    }, [setAuth]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -36,25 +26,19 @@ export function NavbarAuthSec() {
     }, []);
 
     const handleLogout = async () => {
-        const token = localStorage.getItem("token");
-
         const success = await logoutUser(token);
-
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
         logout();
         router.push("/");
 
-        if (!success) {
-            console.warn("Logout gagal");
+        if (success) {
+            showToast("Logout berhasil!", "success");
+        } else {
+            showToast("Logout gagal!", "error");
         }
     };
 
-
-    if (!hasHydrated) return null;
-
     return (
-        <div className="relative flex items-center justify-center gap-4">
+        <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center gap-4 w-full lg:w-auto">
             {user ? (
                 <div className="relative" ref={menuRef}>
                     <button
@@ -102,8 +86,7 @@ export function NavbarAuthSec() {
                     </p>
                 </Link>
             )}
-
-            <ButtonEmergency/>
+            <ButtonEmergency />
         </div>
     );
 }

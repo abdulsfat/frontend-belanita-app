@@ -5,7 +5,7 @@ import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
 import ArticleTable from "@/app/_components/Admin/tables/article-tables/page";
 import { useModal } from "@/app/_hooks/useModal";
-import CreateArticleModal from "@/app/_components/modal/create-article/page";
+import CreateArticleModal from "@/app/_components/Modal/CreateArticleModal";
 import useAuthStore from "@/app/_stores/authStore";
 import useToastStore from "@/app/_stores/toastStore";
 import UsersTable from "@/app/_components/Admin/tables/article-tables/page";

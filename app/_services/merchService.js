@@ -1,4 +1,3 @@
-// services/articleService.js
 import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
@@ -23,11 +22,6 @@ export const getRandomMerchExceptSlug = async (slug, limit = 3) => {
 };
 
 export const orderMerchandise = async (token, data) => {
-    const response = await axios.post(`${API_BASE_URL}/order`, data, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-    });
+    const response = await axios.post(`${API_BASE_URL}/order`, data );
     return response.data.data;
 };

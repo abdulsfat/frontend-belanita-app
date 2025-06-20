@@ -3,12 +3,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Phone } from "lucide-react";
+import { useModal } from "@/app/_hooks/useModal";
 
 const buttonVariants = {
   hover: {
     scale: 1.05,
     backgroundColor: "#632C91",
-
     transition: {
       type: "spring",
       stiffness: 500,
@@ -22,7 +22,6 @@ const buttonVariants = {
 
 const backgroundVariants = {
   hover: {
-    // scale: 5,
     transition: {
       type: "spring",
       stiffness: 500,
@@ -35,22 +34,28 @@ const backgroundVariants = {
 };
 
 export const ButtonEmergency = () => {
+  const { isOpen, openModal, closeModal } = useModal();
+
+
   return (
-    <motion.button
-      variants={buttonVariants}
-      whileHover="hover"
-      whileTap="tap"
-      className="flex flex-row justify-center items-center bg-tertiary rounded-3xl px-5 pe-1 p-1 hover:text-white"
-    >
-      Emergency Call
-      <motion.div
-        variants={backgroundVariants}
-        whileHover="hover"
-        whileTap="tap"
-        className="ms-2 bg-secondary rounded-full p-2"
-      >
-        <Phone className="stroke-tertiary" />
-      </motion.div>
-    </motion.button>
+      <div>
+        <motion.button
+            onClick={() => openModal("EMERGENCY")}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+            className="flex flex-row justify-center items-center bg-tertiary rounded-3xl px-5 pe-1 p-1 hover:text-white"
+        >
+          Emergency Call
+          <motion.div
+              variants={backgroundVariants}
+              whileHover="hover"
+              whileTap="tap"
+              className="ms-2 bg-secondary rounded-full p-2"
+          >
+            <Phone className="stroke-tertiary" />
+          </motion.div>
+        </motion.button>
+      </div>
   );
 };

@@ -5,6 +5,7 @@ import axios from "axios";
 import { Upload } from "lucide-react";
 import useAuthStore from "@/app/_stores/authStore";
 import CustomToast from "@/app/_components/Toast/CustomToast";
+import useToastStore from "@/app/_stores/toastStore";
 
 export default function Complaints() {
   const { token, user } = useAuthStore();
@@ -17,7 +18,8 @@ export default function Complaints() {
     image: null,
   });
 
-  const [toast, setToast] = useState({ open: false, message: "" });
+  const { toast, showToast, hideToast } = useToastStore();
+
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -27,14 +29,7 @@ export default function Complaints() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!token) {
-      setToast({ open: true, message: "Anda harus login terlebih dahulu" });
-      return;
-    }
-
+  const handleSubmit = async () => {
     const formData = new FormData();
     formData.append("subject", form.subject);
     formData.append("description", form.description);
@@ -55,7 +50,7 @@ export default function Complaints() {
           }
       );
 
-      setToast({ open: true, message: "Pengaduan berhasil dikirim!" });
+      showToast("Pengaduan berhasil dikirim!", "success");
       setForm({
         subject: "",
         phone: "",
@@ -65,35 +60,28 @@ export default function Complaints() {
         image: null,
       });
     } catch (error) {
-      setToast({ open: true, message: "Gagal mengirim pengaduan" });
+      showToast("Gagal mengirim pengaduan", "error");
     }
   };
 
   return (
       <div className="py-20 px-4 mt-5 sm:px-6 lg:px-8 flex flex-col items-center">
-        {/* Toast */}
-        <CustomToast
-            isOpen={toast.open}
-            message={toast.message}
-            onClose={() => setToast({ ...toast, open: false })}
-        />
-
         {/* Banner */}
         <img
             src="/complaints.png"
             alt="We Will Not Be Silenced"
-            className="rounded-3xl shadow-lg h-[32rem] w-full object-cover mb-10"
+            className="rounded-3xl shadow-lg w-full h-64 sm:h-96 md:h-[32rem] object-cover mb-10 transition-all duration-300"
         />
 
         {/* Deskripsi */}
-        <div className="w-full grid grid-flow-col grid-rows-3 gap-10 items-start mb-28 justify-between">
-          <div className="col-span-2 row-span-4">
-            <h2 className="text-7xl font-normal text-gray-900 leading-tight">
+        <div className="w-full flex flex-col md:flex-row items-start justify-between gap-8 mb-28">
+          <div className="w-full md:w-2/3">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal text-gray-900 leading-snug">
               Your Voice Matters. We're <br /> Here to Help.
             </h2>
           </div>
-          <div className="row-span-3">
-            <p className="text-md text-gray-800">
+          <div className="w-full md:w-1/3 mt-6 md:mt-0">
+            <p className="text-sm sm:text-md md:text-lg text-gray-800 leading-relaxed">
               We are committed to providing a safe and supportive environment for all women.
               Don’t hesitate to reach out and share your concerns.
             </p>
@@ -194,13 +182,26 @@ export default function Complaints() {
           <div className="mt-8 flex justify-end">
             <button
                 type="submit"
-                onClick={handleSubmit}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (!token) {
+                    showToast("Anda harus login terlebih dahulu", "error");
+                    return;
+                  }
+                  handleSubmit();
+                }}
                 className="bg-tertiary text-black font-semibold py-3 px-8 rounded-full hover:bg-lime-300 transition"
             >
               Submit
             </button>
           </div>
         </div>
+        <CustomToast
+            message={toast.message}
+            isOpen={toast.isOpen}
+            status={toast.status}
+            onClose={hideToast}
+        />
       </div>
   );
 }

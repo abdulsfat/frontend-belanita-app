@@ -34,7 +34,6 @@ export default function Merchendise() {
         currentPage * itemsPerPage
     );
 
-    console.log(displayedItems)
     return (
         <div className="py-20 px-4 mt-5 sm:px-6 lg:px-8 flex flex-col justify-between">
             {/* Banner */}
@@ -42,20 +41,23 @@ export default function Merchendise() {
                 <img
                     src="/complaints.png"
                     alt="We Will Not Be Silenced"
-                    className="rounded-3xl shadow-lg h-[32rem] w-full object-cover mb-10"
+                    className="rounded-3xl shadow-lg w-full h-64 sm:h-80 md:h-[28rem] lg:h-[32rem] object-cover mb-10 transition-all"
                 />
             </div>
 
             {/* Deskripsi */}
-            <div className="w-full grid grid-flow-col grid-rows-3 gap-10 items-start mb-28 justify-between">
-                <div className="col-span-2 row-span-4">
-                    <h2 className="text-7xl font-normal text-gray-900 leading-tight">
+            <div className="w-full flex flex-col md:flex-row items-start justify-between gap-8 mb-28">
+                <div className="w-full md:w-2/3">
+                    <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal text-gray-900 leading-snug">
                         Discover your passion <br /> with us.
                     </h2>
                 </div>
-                <div className="row-span-3">
-                    <p className="text-md text-gray-800">
-                        Unleash your inner strength and make a statement with our exclusive range of accessories. Each piece is designed to inspire, empower, and celebrate your unique journey towards equality and self-expression. Find the perfect accessory that resonates with your passion and showcases your commitment to women's rights.
+                <div className="w-full md:w-1/3 mt-6 md:mt-0">
+                    <p className="text-sm sm:text-md md:text-lg text-gray-800 leading-relaxed">
+                        Unleash your inner strength and make a statement with our exclusive range of accessories.
+                        Each piece is designed to inspire, empower, and celebrate your unique journey towards equality
+                        and self-expression. Find the perfect accessory that resonates with your passion and showcases
+                        your commitment to women's rights.
                     </p>
                 </div>
             </div>

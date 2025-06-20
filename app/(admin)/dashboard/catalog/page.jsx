@@ -18,7 +18,7 @@ export default function ListUsers() {
                 <ComponentCard
                     title="List Catalog"
                 >
-                    <MerchendiseTable />
+                    {/*<MerchendiseTable />*/}
                 </ComponentCard>
             </div>
         </div>

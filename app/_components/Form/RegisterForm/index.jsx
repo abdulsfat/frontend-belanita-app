@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import InputField from "@/app/_components/Input/InputField";
 import useToastStore from "@/app/_stores/toastStore";
 import { registerUser } from "@/app/_services/authService";
+import {Eye, EyeClosed} from "lucide-react";
+import InputField from "@/app/_components/Form/input/InputField";
 
 export default function RegisterForm() {
     const router = useRouter();
     const { showToast } = useToastStore();
+    const [showPassword, setShowPassword] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
+
 
     const [formData, setFormData] = useState({
         name: "",
@@ -100,23 +104,54 @@ export default function RegisterForm() {
                 onChange={handleChange}
             />
 
-            <InputField
-                label="Password"
-                type="password"
-                name="password"
-                placeholder="Masukkan password"
-                value={formData.password}
-                onChange={handleChange}
-            />
-
-            <InputField
-                label="Konfirmasi Password"
-                type="password"
-                name="confirmPassword"
-                placeholder="Ulangi password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-            />
+            <div>
+                <div className="relative">
+                    <InputField
+                        label="Password"
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="Masukkan password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 bottom-[10px] text-sm text-gray-500 hover:text-gray-800"
+                    >
+                        {showPassword ?
+                            <EyeClosed/>
+                            : <Eye/>}
+                    </button>
+                </div>
+                {formErrors.password && (
+                    <p className="text-sm text-red-500 mt-1">{formErrors.password}</p>
+                )}
+            </div>
+            <div>
+                <div className="relative">
+                    <InputField
+                        label="Konfirmasi Password"
+                        type={showPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        placeholder="Ulangi password"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 bottom-[10px] text-sm text-gray-500 hover:text-gray-800"
+                    >
+                        {showPassword ?
+                            <EyeClosed/>
+                            : <Eye/>}
+                    </button>
+                </div>
+                {formErrors.password && (
+                    <p className="text-sm text-red-500 mt-1">{formErrors.password}</p>
+                )}
+            </div>
 
             <button
                 type="submit"

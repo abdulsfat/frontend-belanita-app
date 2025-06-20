@@ -6,7 +6,7 @@ const Switch = ({
   defaultChecked = false,
   disabled = false,
   onChange,
-  color = "blue", // Default to blue color
+  color = "blue",
 }) => {
   const [isChecked, setIsChecked] = useState(defaultChecked);
 
@@ -24,7 +24,7 @@ const Switch = ({
       ? {
           background: isChecked
             ? "bg-brand-500 "
-            : "bg-gray-200 dark:bg-white/10", // Blue version
+            : "bg-gray-200 dark:bg-white/10",
           knob: isChecked
             ? "translate-x-full bg-white"
             : "translate-x-0 bg-white",
@@ -32,7 +32,7 @@ const Switch = ({
       : {
           background: isChecked
             ? "bg-gray-800 dark:bg-white/10"
-            : "bg-gray-200 dark:bg-white/10", // Gray version
+            : "bg-gray-200 dark:bg-white/10",
           knob: isChecked
             ? "translate-x-full bg-white"
             : "translate-x-0 bg-white",

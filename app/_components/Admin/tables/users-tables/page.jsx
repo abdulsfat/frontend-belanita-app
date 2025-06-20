@@ -22,12 +22,12 @@ export default function UsersTable() {
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
     const { showToast } = useToastStore();
-    const { token } = useAuthStore(); // ambil token login
+    const { token } = useAuthStore();
 
     const fetchUsers = async () => {
         setIsLoading(true);
         try {
-            const data = await getUsers(token); // kirim token
+            const data = await getUsers(token);
             setUsers(data || []);
         } catch (error) {
             showToast("Gagal mengambil data pengguna", "error");
@@ -63,11 +63,10 @@ export default function UsersTable() {
         }
 
         try {
-            const token = localStorage.getItem("token");
             await deleteUser(id, token);
 
             showToast("Pengguna berhasil dihapus", "success");
-            fetchUsers();
+            await fetchUsers();
             setConfirmDeleteId(null);
             closeDropdown();
         } catch (error) {

@@ -1,8 +1,11 @@
 // next.config.mjs
 const nextConfig = {
+    matcher: ["/profile", "/dashboard", "/login", "/register"],
     reactStrictMode: true,
     images: {
         domains: ["127.0.0.1", "localhost"],
+        // domains: ["192.168.18.204"],
+
     },
     webpack(config) {
         config.module.rules.push({
