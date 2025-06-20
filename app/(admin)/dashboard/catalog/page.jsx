@@ -26,6 +26,7 @@ export default function ListMerchandise() {
                     onclick={openCreateModal}
                 >
                     <MerchandiseTable />
+
                 </ComponentCard>
             </div>
             <CreateMerchandiseModal

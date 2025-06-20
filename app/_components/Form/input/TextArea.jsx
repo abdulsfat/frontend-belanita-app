@@ -1,5 +1,5 @@
 const TextArea = ({
-                    name, // ✅ TAMBAHKAN INI
+                    name,
                     placeholder = "Enter your message",
                     rows = 3,
                     value = "",

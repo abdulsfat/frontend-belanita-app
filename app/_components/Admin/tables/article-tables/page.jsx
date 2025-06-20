@@ -12,34 +12,21 @@ import {
     Table,
 } from "@/app/_components/Admin/ui/table";
 import Badge from "@/app/_components/Admin/ui/badge/Badge";
-import { deleteArticle, getArticles } from "@/app/_services/articleService";
+import { deleteArticle } from "@/app/_services/articleService";
 import { useRouter } from "next/navigation";
 import useToastStore from "@/app/_stores/toastStore";
-import {EllipsisVertical} from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
+import useAuthStore from "@/app/_stores/authStore";
+import useArticleStore from "@/app/_stores/articleStore";
 
 export default function ArticleTable() {
-    const [articleItems, setArticleItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [openDropdownId, setOpenDropdownId] = useState(null);
-    const { showToast } = useToastStore();
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+    const { showToast } = useToastStore();
+    const { token } = useAuthStore();
+    const { removeArticle, articles } = useArticleStore();
     const router = useRouter();
 
-    const fetchArticlesData = async () => {
-        setIsLoading(true);
-        try {
-            const data = await getArticles(1, 9);
-            setArticleItems(data || []);
-        } catch (error) {
-            showToast("Gagal mengambil data artikel", "error");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchArticlesData();
-    }, []);
 
     useEffect(() => {
         if (confirmDeleteId !== null) {
@@ -58,6 +45,7 @@ export default function ArticleTable() {
         setOpenDropdownId(null);
     };
 
+
     const handleDelete = async (id) => {
         if (confirmDeleteId !== id) {
             setConfirmDeleteId(id);
@@ -66,18 +54,17 @@ export default function ArticleTable() {
         }
 
         try {
-            const token = localStorage.getItem("token");
             await deleteArticle(id, token);
-
-            closeDropdown();
+            removeArticle(id);
             showToast("Artikel berhasil dihapus", "success");
-            setConfirmDeleteId(null);
-            fetchArticlesData();
         } catch (error) {
-            console.error("Gagal menghapus artikel:", error);
             showToast("Terjadi kesalahan saat menghapus artikel", "error");
+        } finally {
+            setConfirmDeleteId(null);
+            closeDropdown();
         }
     };
+
 
     return (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -93,7 +80,7 @@ export default function ArticleTable() {
                         </TableHeader>
 
                         <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                            {articleItems.map((item) => (
+                            {articles.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="px-5 py-4 sm:px-6 text-start">
                                         <div className="flex items-center gap-3">

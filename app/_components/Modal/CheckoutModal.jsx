@@ -1,22 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Image from "next/image";
 import Button from "@/app/_components/Admin/ui/button/Button";
+import {orderMerchandise} from "@/app/_services/merchService";
+import useAuthStore from "@/app/_stores/authStore";
+import {Modal} from "@/app/_components/Admin/ui/modal";
 
 export default function CheckoutModal({
                                           isOpen,
                                           onClose,
-                                          onConfirm,
                                           merch,
                                           user,
-                                          quantity,
-                                          setQuantity,
+                                          refetchMerch,
                                       }) {
+    const [quantity, setQuantity] = useState(1)
     const [error, setError] = useState("");
+    const {token} = useAuthStore();
+    const refreshUserProfile = useAuthStore((state) => state.refreshUserProfile);
 
     useEffect(() => {
-        // Reset error saat modal dibuka ulang
         if (isOpen) setError("");
     }, [isOpen]);
 
@@ -33,15 +36,55 @@ export default function CheckoutModal({
         }
     };
 
+    const handleOrderConfirm = async () => {
+        try {
+            if (!token) {
+                alert("Silakan login terlebih dahulu.");
+                return;
+            }
+
+            if (quantity < 1 || quantity > merch.stock) {
+                alert("Jumlah pesanan tidak valid.");
+                return;
+            }
+
+            const payload = {
+                quantity,
+                merchandise_id: merch.id,
+            };
+
+            await orderMerchandise(token, payload);
+            await refreshUserProfile();
+
+            if (typeof refetchMerch === "function") {
+                await refetchMerch();
+            }
+
+            alert("Pesanan berhasil dibuat!");
+            onClose();
+        } catch (error) {
+            console.error("Gagal order:", error.response?.data || error.message);
+            alert("Gagal melakukan pesanan.");
+        }
+    };
+
+    console.log("duittt", user.balance)
     const totalPrice = quantity * merch.price;
 
     if (!isOpen || !merch) return null;
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-            <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-fade-in">
-                <h2 className="text-xl font-semibold mb-4 text-center">Konfirmasi Pesanan</h2>
-
+        <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+            <div
+                className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+                <div className="px-2 pr-14">
+                    <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+                        Create Article
+                    </h4>
+                    <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
+                        Create your article
+                    </p>
+                </div>
                 <div className="flex flex-col items-center gap-3 text-sm">
                     <Image
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${merch.image}`}
@@ -65,19 +108,27 @@ export default function CheckoutModal({
                             max={merch.stock}
                             value={quantity}
                             onChange={handleQuantityChange}
+                            onKeyDown={(e) => {
+                                if (e.key === "-" || e.key === "e") e.preventDefault();
+                            }}
                             className="border px-4 py-2 w-full rounded-xl"
                         />
                         {error && <p className="text-red-600 mt-2 text-sm">{error}</p>}
                     </div>
 
                     {/* Total */}
-                    <div className="w-full mt-2 border-t pt-4">
+                    <div className="w-full flex justify-between items-center mt-2 border-t pt-4">
+                        <p>Total Saldo Anda: <span
+                            className="text-secondary font-semibold">Rp {Number(user.balance).toLocaleString("id-ID")}</span>
+                        </p>
                         <p className="text-right text-md font-medium">
-                            Total: <span className="text-secondary">Rp {Number(totalPrice).toLocaleString("id-ID")}</span>
+                            Total:{" "}
+                            <span className="text-secondary font-semibold">
+                Rp {Number(totalPrice).toLocaleString("id-ID")}
+              </span>
                         </p>
                     </div>
                 </div>
-
                 <div className="mt-6 flex justify-between gap-4">
                     <Button variant="outline" className="w-full" onClick={onClose}>
                         Batal
@@ -85,13 +136,14 @@ export default function CheckoutModal({
                     <Button
                         variant="secondary"
                         className="w-full"
-                        onClick={onConfirm}
+                        onClick={handleOrderConfirm}
                         disabled={!!error || quantity === 0}
                     >
                         Konfirmasi
                     </Button>
                 </div>
             </div>
-        </div>
+
+        </Modal>
     );
 }

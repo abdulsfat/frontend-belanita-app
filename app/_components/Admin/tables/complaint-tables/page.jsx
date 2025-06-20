@@ -62,7 +62,6 @@ export default function ComplaintTable() {
     try {
       const token = localStorage.getItem("token");
       await deleteComplaint(id, token);
-
       closeDropdown();
       showToast("Pengaduan berhasil dihapus", "success");
       setConfirmDeleteId(null);

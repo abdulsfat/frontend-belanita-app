@@ -19,6 +19,13 @@ const nextConfig = {
     });
     return config;
   },
+  matcher: ["/profile", "/dashboard", "/login", "/register"],
+   reactStrictMode: true,
+    images: {
+        domains: ["127.0.0.1", "localhost"],
+        // domains: ["192.168.18.204"],
+
+    },
   experimental: {
     turbo: {
       rules: {
@@ -27,7 +34,6 @@ const nextConfig = {
           as: "*.js",
         },
       },
-    },
   },
 };
 

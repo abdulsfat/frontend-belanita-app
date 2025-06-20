@@ -1,9 +1,7 @@
 import LoginForm from "@/app/_components/Form/LoginForm";
-import GuestOnlyRoute from "@/app/_middlewares/GuestOnlyRoute";
 
 export default function LoginPage() {
     return (
-        <GuestOnlyRoute>
             <div className="flex items-center justify-center min-h-screen bg-gray-100">
                 <div className="w-full max-w-sm p-6 bg-white rounded-2xl shadow-md">
                     <div className="flex justify-center mb-6">
@@ -20,6 +18,5 @@ export default function LoginPage() {
                     </p>
                 </div>
             </div>
-        </GuestOnlyRoute>
     );
 }

@@ -13,12 +13,14 @@ import DropZone from "@/app/_components/Form/form-elements/DropZone";
 import Button from "@/app/_components/Admin/ui/button/Button";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
 import useToastStore from "@/app/_stores/toastStore";
+import useAuthStore from "@/app/_stores/authStore";
 
 export default function ArticleEditPage() {
     const { slug } = useParams();
     const router = useRouter();
 
     const { showToast } = useToastStore();
+    const { token } = useAuthStore();
     const [article, setArticle] = useState(null);
     const [form, setForm] = useState({ title: "", content: "", status: "" });
     const [image, setImage] = useState(null);
@@ -57,7 +59,6 @@ export default function ArticleEditPage() {
 
         setLoading(true);
 
-        const token = localStorage.getItem("token");
         const formData = new FormData();
         formData.append("title", form.title.trim());
         formData.append("content", form.content.trim());

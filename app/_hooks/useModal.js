@@ -1,12 +1,13 @@
-"use client";
-import { useState, useCallback } from "react";
+import { create } from "zustand";
 
-export const useModal = (initialState) => {
-  const [isOpen, setIsOpen] = useState(initialState);
+export const useModal = create((set) => ({
+  isOpen: false,
+  modalType: null,
+  modalData: null,
 
-  const openModal = useCallback(() => setIsOpen(true), []);
-  const closeModal = useCallback(() => setIsOpen(false), []);
-  const toggleModal = useCallback(() => setIsOpen((prev) => !prev), []);
+  openModal: (type, data = null) =>
+      set({ isOpen: true, modalType: type, modalData: data }),
 
-  return { isOpen, openModal, closeModal, toggleModal };
-};
+  closeModal: () =>
+      set({ isOpen: false, modalType: null, modalData: null }),
+}));
