@@ -2,7 +2,8 @@ const nextConfig = {
   // matcher: ["/profile", "/dashboard", "/login", "/register"],
   reactStrictMode: true,
   images: {
-    domains: ["127.0.0.1", "localhost"],
+    domains: ["belanita.karyakreasi.id"],
+    // domains: ["127.0.0.1", "localhost"],
     // domains: ["192.168.18.204"],
 
   },
