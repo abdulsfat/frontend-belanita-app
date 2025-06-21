@@ -1,12 +1,11 @@
 
-import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import GridShape from "@/app/_components/Admin/common/GridShape";
 
-export const metadata: Metadata = {
-  title: "Belanita Error 404 | Belanita - Next.js Dashboard Template",
+export const metadata = {
+  title: "Belanita Error 404 | Belanita - Championing Women’s Rights",
   description:
     " Error 404 page for Belanita - Championing Women’s Rights",
 };
