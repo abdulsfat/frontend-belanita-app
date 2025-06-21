@@ -37,6 +37,7 @@ const navItems = [
         subItems: [
             {name: "Katalog Merchendise", path: "/dashboard/catalog", pro: false},
             {name: "Transactions", path: "/dashboard/transactions", pro: false},
+            {name: "Category", path: "/dashboard/category", pro: false},
         ],
     },
     {

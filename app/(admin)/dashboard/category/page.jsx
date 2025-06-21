@@ -8,19 +8,21 @@ import { useModal } from "@/app/_hooks/useModal";
 import useAuthStore from "@/app/_stores/authStore";
 import useToastStore from "@/app/_stores/toastStore";
 import useArticleStore from "@/app/_stores/articleStore";
+import useMerchandiseStore from "@/app/_stores/merchandiseStore";
+import CategoryTable from "@/app/_components/Admin/tables/CategoryTable";
 
 export default function ListArticle() {
-    const { fetchArticles } = useArticleStore();
+    const { fetchCategories } = useMerchandiseStore();
     const { token } = useAuthStore();
     const { showToast } = useToastStore();
     const { openModal } = useModal();
 
     useEffect(() => {
-        fetchArticles()
+        fetchCategories()
     }, []);
 
     const openCreateModal = () => {
-        openModal("CREATE_ARTICLE", {
+        openModal("CREATE_CATEGORY", {
             token,
             showToast,
         });
@@ -31,11 +33,11 @@ export default function ListArticle() {
             <PageBreadcrumb pageTitle="Article Dashboard" />
             <div className="space-y-6">
                 <ComponentCard
-                    title="List Articles"
-                    action="Create Article"
+                    title="List Categories"
+                    action="Create Categories"
                     onclick={openCreateModal}
                 >
-                    <ArticleTable />
+                    <CategoryTable />
                 </ComponentCard>
             </div>
         </div>

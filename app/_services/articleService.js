@@ -2,12 +2,12 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
 
-export const getArticles = async () => {
+export const getAllArticles = async () => {
     const response = await axios.get(`${API_BASE_URL}/article`);
     return response.data.data;
 };
 
-export const getDetailArticles = async (slug) => {
+export const getArticleBySlug = async (slug) => {
     const response = await axios.get(`${API_BASE_URL}/article/${slug}`);
     return response.data.data;
 };
@@ -33,18 +33,10 @@ export const getRandomArticlesExceptSlug = async (slug, limit = 3) => {
 };
 
 
-export const deleteArticle = async (id, token) => {
+export const deleteArticleById = async (id) => {
     return axios.delete(`${API_BASE_URL}/article/${id}`);
 };
 
-export const getArticleBySlug = async (slug, token) => {
-    const response = await axios.get(`${API_BASE_URL}/article/${slug}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    return response.data.data;
-};
 
 export const updateArticle = async (slug, token, data) => {
     const response = await axios.post(

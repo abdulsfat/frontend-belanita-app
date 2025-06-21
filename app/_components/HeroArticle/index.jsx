@@ -9,7 +9,7 @@ import useArticleStore from "@/app/_stores/articleStore";
 import { getArticles } from "@/app/_services/articleService";
 
 export function HeroArticle() {
-    const { articles, setArticles } = useArticleStore();
+    const { articles, fetchArticles } = useArticleStore();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
@@ -21,18 +21,7 @@ export function HeroArticle() {
     const topArticles = articles.slice(0, 4);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getArticles();
-                setArticles(data);
-            } catch (err) {
-                setError("Gagal memuat artikel.");
-            }
-        };
-
-        if (articles.length === 0) {
-            fetchData();
-        }
+        fetchArticles()
     }, []);
 
     useEffect(() => {

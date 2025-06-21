@@ -1,20 +1,30 @@
 "use client";
 
-import React from "react";
+import React, {useEffect} from "react";
 import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
 import { useModal } from "@/app/_hooks/useModal";
 import useAuthStore from "@/app/_stores/authStore";
 import useToastStore from "@/app/_stores/toastStore";
-import MerchandiseTable from "@/app/_components/Admin/tables/merchandise-tables/page";
-import CreateMerchandiseModal from "@/app/_components/modal/create-merchandise/page";
+import MerchandiseTable from "@/app/_components/Admin/tables/MerchandiseTabel";
+import useMerchandiseStore from "@/app/_stores/merchandiseStore";
 
 export default function ListMerchandise() {
-    const { isOpen, openModal, closeModal } = useModal();
+    const { fetchMerchandises } = useMerchandiseStore();
     const { token } = useAuthStore();
     const { showToast } = useToastStore();
+    const { openModal } = useModal();
 
-    const openCreateModal = () => openModal();
+    useEffect(() => {
+        fetchMerchandises()
+    }, []);
+
+    const openCreateModal = () => {
+        openModal("CREATE_MERCH", {
+            token,
+            showToast,
+        });
+    };
 
     return (
         <div>
@@ -26,15 +36,8 @@ export default function ListMerchandise() {
                     onclick={openCreateModal}
                 >
                     <MerchandiseTable />
-
                 </ComponentCard>
             </div>
-            <CreateMerchandiseModal
-                isOpen={isOpen}
-                onClose={closeModal}
-                token={token}
-                showToast={showToast}
-            />
         </div>
     );
 }

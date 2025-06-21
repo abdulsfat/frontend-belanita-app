@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { getUserEmergencies, createEmergencyRequest, deleteEmergencyRequest } from "@/app/_services/emergencyService";
+import {
+    getUserEmergencies,
+    createEmergencyRequest,
+    deleteEmergencyRequest,
+    updateEmergencyStatus
+} from "@/app/_services/emergencyService";
 
 const useEmergencyStore = create((set) => ({
     emergencies: [],
@@ -27,6 +32,24 @@ const useEmergencyStore = create((set) => ({
             throw error;
         }
     },
+
+    updateStatus: async (token, id, status) => {
+        try {
+            const updated = await updateEmergencyStatus(token, id, status);
+            console.log("✅ Updated from server:", updated); // pindah ke sini
+
+            set((state) => ({
+                emergencies: state.emergencies.map((e) =>
+                    e.id === id ? { ...e, status: updated.status } : e
+                ),
+            }));
+        } catch (error) {
+            console.error("❌ Gagal update status:", error);
+            throw error;
+        }
+    },
+
+
 
     deleteEmergency: async (id) => {
         try {

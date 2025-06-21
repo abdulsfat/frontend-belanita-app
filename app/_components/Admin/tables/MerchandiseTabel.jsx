@@ -4,50 +4,19 @@ import { Dropdown } from "@/app/_components/Admin/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/app/_components/Admin/ui/dropdown/DropdownItem";
 import React, { useEffect, useState } from "react";
 import { TableBody, TableCell, TableHeader, TableRow, Table } from "@/app/_components/Admin/ui/table";
-import { deleteMerch, getAllMerch, getCategories } from "@/app/_services/merchService";
 import { EllipsisVertical } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useToastStore from "@/app/_stores/toastStore";
+import useMerchandiseStore from "@/app/_stores/merchandiseStore";
 
 export default function MerchandiseTable() {
-  const [categories, setCategories] = useState([]);
-  const [merch, setMerch] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const { showToast } = useToastStore();
-  const router = useRouter();
+  const { deleteMerchandise, merchandises } = useMerchandiseStore();
 
-  const fetchMerch = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllMerch();
-      setMerch(data || []);
-    } catch (error) {
-      console.error("Error fetching merch:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMerch();
-  }, []);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categoriesData = await getCategories();
-        console.log("Kategori berhasil diambil:", categoriesData);
-        setCategories(categoriesData);
-      } catch (error) {
-        console.error("Gagal mengambil kategori:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   useEffect(() => {
     if (confirmDeleteId !== null) {
@@ -74,16 +43,13 @@ export default function MerchandiseTable() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      await deleteMerch(id, token);
-
-      closeDropdown();
+      await deleteMerchandise(id);
       showToast("Merchandise berhasil dihapus", "success");
-      setConfirmDeleteId(null);
-      fetchMerch();
     } catch (error) {
-      console.error("Gagal menghapus merchandise:", error);
       showToast("Terjadi kesalahan saat menghapus merchandise", "error");
+    } finally {
+      setConfirmDeleteId(null);
+      closeDropdown();
     }
   };
 
@@ -112,11 +78,11 @@ export default function MerchandiseTable() {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {merch.map((item) => (
+              {merchandises.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start">
+                  <TableCell className="px-4 py-3 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
-                      <div className="max-w-full overflow-hidden me-2">
+                      <div className="max-w-full overflow-hidden ">
                         <Image width={100} height={80} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.image}`} alt={item.name} />
                       </div>
                       <div>
@@ -146,7 +112,7 @@ export default function MerchandiseTable() {
                           Detail
                         </DropdownItem>
                         <DropdownItem
-                          onItemClick={() => router.push(`/dashboard/catalog/edit/${item.slug}`)}
+                          onItemClick={() => router.push(`/dashboard/catalog/edit/${item.id}`)}
                           className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                         >
                           Edit

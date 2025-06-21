@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Card, TextSlide } from "@/components";
-import { getDetailMerch, getRandomMerchExceptSlug } from "@/app/_services/merchService";
 import useAuthStore from "@/app/_stores/authStore";
 import Button from "@/app/_components/Admin/ui/button/Button";
 import CustomToast from "@/app/_components/Toast/CustomToast";
-import {useModal} from "@/app/_hooks/useModal";
+import { useModal } from "@/app/_hooks/useModal";
 import useToastStore from "@/app/_stores/toastStore";
+import useMerchandiseStore from "@/app/_stores/merchandiseStore";
+
 
 export default function DetailMerchandisePage() {
     const { slug } = useParams();
@@ -16,31 +17,31 @@ export default function DetailMerchandisePage() {
     const { isOpen, openModal, closeModal } = useModal();
     const { toast, showToast, hideToast } = useToastStore();
 
-    const [merch, setMerch] = useState(null);
-    const [relatedMerch, setRelatedMerch] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { merchandises, fetchMerchandises, getMerchBySlug } = useMerchandiseStore()
 
-
-    const fetchMerch = async () => {
-        try {
-            const detail = await getDetailMerch(slug);
-            setMerch(detail);
-        } catch (error) {
-            showToast("Gagal mengambil data merch", error)
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [localMerch, setLocalMerch] = useState(null);
 
     useEffect(() => {
-        if (slug) {
-            fetchMerch();
-            getRandomMerchExceptSlug(slug).then(setRelatedMerch);
+        if (!slug) return;
+
+        const merch = getMerchBySlug(slug);
+        if (merch) {
+            setLocalMerch(merch);
+        } else {
+            fetchMerchandises().then(() => {
+                const refreshed = useMerchandiseStore.getState().getMerchBySlug(slug);
+                if (refreshed) {
+                    setLocalMerch(refreshed);
+                } else {
+                    showToast("Merchandise tidak ditemukan", "error");
+                }
+            }).catch(() => {
+                showToast("Gagal mengambil data merch", "error");
+            });
         }
     }, [slug]);
 
-    if (loading) return <div className="text-center py-20">Loading...</div>;
-    if (!merch) return <div className="text-center py-20 text-red-500">Merchandise tidak ditemukan.</div>;
+    if (!localMerch) return <div className="text-center py-20">Loading...</div>;
 
     return (
         <div className="py-20 mt-5">
@@ -48,8 +49,8 @@ export default function DetailMerchandisePage() {
                 {/* Gambar utama */}
                 <div className="lg:w-[50%]">
                     <img
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${merch.image}`}
-                        alt={merch.name}
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${localMerch.image}`}
+                        alt={localMerch.name}
                         className="rounded-3xl shadow-lg lg:h-[32rem] w-full object-cover mb-10"
                     />
                 </div>
@@ -57,15 +58,15 @@ export default function DetailMerchandisePage() {
                 {/* Detail */}
                 <div className="flex-1">
                     <h2 className="lg:text-6xl mb-2 text-2xl font-normal text-gray-900 leading-tight">
-                        {merch.name}
+                        {localMerch.name}
                     </h2>
                     <p className="text-xl font-semibold text-secondary mb-1">
-                        Rp {Number(merch.price).toLocaleString("id-ID")}
+                        Rp {Number(localMerch.price).toLocaleString("id-ID")}
                     </p>
-                    <p className="text-gray-800 font-medium mb-4">Stok: {merch.stock} </p>
+                    <p className="text-gray-800 font-medium mb-4">Stok: {localMerch.stock} </p>
                     <div className="mb-4">
                         <p className="text-md text-gray-500 whitespace-pre-line leading-6">
-                            {merch.description}
+                            {localMerch.description}
                         </p>
                     </div>
                     <Button
@@ -80,9 +81,9 @@ export default function DetailMerchandisePage() {
                             }
 
                             openModal("CHECKOUT", {
-                                merch,
+                                merch: localMerch,
                                 user,
-                                refetchMerch: fetchMerch,
+                                refetchMerch: fetchMerchandises,
                             });
                         }}
                     >
@@ -94,7 +95,7 @@ export default function DetailMerchandisePage() {
             {/* Rekomendasi */}
             <TextSlide text={"You might also like"} style="text-[max(2em,3vw)]" />
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-8 px-12">
-                {relatedMerch.map((item) => (
+                {merchandises.filter((m) => m.slug !== slug).slice(0, 3).map((item) => (
                     <Card
                         key={item.id}
                         image={item.image}

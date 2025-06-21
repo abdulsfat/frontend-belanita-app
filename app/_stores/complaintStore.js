@@ -1,8 +1,13 @@
 import { create } from "zustand";
-import {getAllComplaints, deleteComplaintById} from "@/app/_services/complaintService";
+import {
+    getAllComplaints,
+    deleteComplaintById,
+    submitFeedback
+} from "@/app/_services/complaintService";
 import axios from "axios";
+import * as complaintService from "@/app/_services/complaintService";
 
-const useComplaintStore = create((set) => ({
+const useComplaintStore = create((set, get) => ({
     complaints: [],
     isLoading: false,
 
@@ -33,6 +38,46 @@ const useComplaintStore = create((set) => ({
             throw error;
         }
     },
+
+    getComplaintById: (id) => {
+        return get().complaints.find((c) => c.id === parseInt(id));
+    },
+
+    submitFeedback: async (complaintId, token, message) => {
+        try {
+            const feedback = await submitFeedback(token, {
+                complaint_id: complaintId,
+                message,
+            });
+
+            set((state) => ({
+                complaints: state.complaints.map((c) =>
+                    c.id === complaintId
+                        ? { ...c, feedbacks: [...(c.feedbacks || []), feedback] }
+                        : c
+                ),
+            }));
+
+            return feedback;
+        } catch (error) {
+            console.error("Gagal mengirim feedback:", error);
+            throw error;
+        }
+    },
+
+    updateStatus: async (token, complaintId, status) => {
+        try {
+            console.log("🔄 Update status:", { complaint_id: complaintId, status });
+            const res = await complaintService.updateComplaintStatus(token, complaintId, status);
+            console.log("✅ Status updated:", res);
+            return res;
+        } catch (error) {
+            console.error("❌ Gagal update status:", error);
+            throw error;
+        }
+    }
+
+
 }));
 
 export default useComplaintStore;

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Badge from "@/app/_components/Admin/ui/badge/Badge";
 import { Dropdown } from "@/app/_components/Admin/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/app/_components/Admin/ui/dropdown/DropdownItem";
 import React, { useEffect, useState } from "react";
@@ -11,21 +12,17 @@ import {
     TableRow,
     Table,
 } from "@/app/_components/Admin/ui/table";
-import Badge from "@/app/_components/Admin/ui/badge/Badge";
-import { deleteArticle } from "@/app/_services/articleService";
 import { useRouter } from "next/navigation";
-import useToastStore from "@/app/_stores/toastStore";
 import { EllipsisVertical } from "lucide-react";
-import useAuthStore from "@/app/_stores/authStore";
+import useToastStore from "@/app/_stores/toastStore";
 import useArticleStore from "@/app/_stores/articleStore";
 
 export default function ArticleTable() {
+    const router = useRouter();
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
     const { showToast } = useToastStore();
-    const { token } = useAuthStore();
-    const { removeArticle, articles } = useArticleStore();
-    const router = useRouter();
+    const { deleteArticle, articles } = useArticleStore();
 
 
     useEffect(() => {
@@ -45,7 +42,6 @@ export default function ArticleTable() {
         setOpenDropdownId(null);
     };
 
-
     const handleDelete = async (id) => {
         if (confirmDeleteId !== id) {
             setConfirmDeleteId(id);
@@ -54,8 +50,7 @@ export default function ArticleTable() {
         }
 
         try {
-            await deleteArticle(id, token);
-            removeArticle(id);
+            await deleteArticle(id);
             showToast("Artikel berhasil dihapus", "success");
         } catch (error) {
             showToast("Terjadi kesalahan saat menghapus artikel", "error");

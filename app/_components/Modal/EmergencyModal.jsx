@@ -1,7 +1,6 @@
 "use client";
 
 import { Modal } from "@/app/_components/Admin/ui/modal";
-import { useEffect, useState } from "react";
 import useToastStore from "@/app/_stores/toastStore";
 import useAuthStore from "@/app/_stores/authStore";
 import { createEmergencyRequest } from "@/app/_services/emergencyService";
@@ -12,53 +11,15 @@ const PHONE_NUMBER = "081234567890";
 export default function EmergencyModal({ isOpen, onClose }) {
     const { showToast } = useToastStore();
     const { token } = useAuthStore();
-    const [location, setLocation] = useState({ lat: null, long: null });
-    const [locationReady, setLocationReady] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    setLocation({
-                        lat: pos.coords.latitude,
-                        long: pos.coords.longitude,
-                    });
-                    setLocationReady(true);
-                },
-                (error) => {
-                    console.error("Lokasi error:", error);
-                    showToast("Gagal mengambil lokasi, gunakan lokasi default", "warning");
-                    setLocation({
-                        lat: -6.200000,
-                        long: 106.816666,
-                    });
-                },
-                {
-                    enableHighAccuracy: false,
-                    timeout: 5000,
-                    maximumAge: 0,
-                }
-            );
-
-        }
-    }, [isOpen]);
 
     const sendToBackend = async (contacted_via) => {
         if (!token) {
             showToast("Silakan login terlebih dahulu untuk mengakses fitur ini", "error");
             return;
         }
-
-        if (!location.lat || !location.long) {
-            showToast("Lokasi belum siap. Mohon tunggu sebentar.", "error");
-            return;
-        }
-
         try {
             await createEmergencyRequest({
                 contacted_via,
-                lat: location.lat,
-                long: location.long,
             });
             showToast("Emergency request berhasil dikirim", "success");
         } catch (error) {
@@ -79,7 +40,7 @@ export default function EmergencyModal({ isOpen, onClose }) {
         window.open(`tel:${PHONE_NUMBER}`, "_self");
     };
 
-    const isDisabled = !token || !locationReady;
+    const isDisabled = !token ;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
@@ -118,7 +79,6 @@ export default function EmergencyModal({ isOpen, onClose }) {
                             </p>
                         </button>
                     </div>
-
                     <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 lg:mt-5">
                         Your safety and well-being are our top priorities. Don't hesitate to reach out!
                     </p>

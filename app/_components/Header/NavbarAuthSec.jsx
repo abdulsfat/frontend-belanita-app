@@ -26,16 +26,17 @@ export function NavbarAuthSec() {
     }, []);
 
     const handleLogout = async () => {
-        const success = await logoutUser(token);
+        try {
+            await logoutUser();
+        } catch (err) {
+            console.warn("Logout gagal:", err);
+        }
+
         logout();
         router.push("/");
-
-        if (success) {
-            showToast("Logout berhasil!", "success");
-        } else {
-            showToast("Logout gagal!", "error");
-        }
+        showToast("Berhasil logout", "success");
     };
+
 
     return (
         <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center gap-4 w-full lg:w-auto">
