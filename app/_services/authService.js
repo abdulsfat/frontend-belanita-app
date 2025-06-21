@@ -22,6 +22,7 @@ export const registerUser = async (data) => {
 
 export const logoutUser = async () => {
     const token = useAuthStore.getState().token;
+    if (!token) return;
 
     try {
         await axios.post(`${API_BASE_URL}/logout`, {}, {
@@ -32,9 +33,8 @@ export const logoutUser = async () => {
     } catch (err) {
         console.warn("Logout gagal:", err);
     }
-
-    useAuthStore.getState().logout();
 };
+
 
 export const restoreAuth = () => {
     const { token } = useAuthStore.getState();

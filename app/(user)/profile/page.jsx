@@ -5,18 +5,32 @@ import UserMetaCard from "@/app/_components/Admin/user-profile/UserMetaCard";
 import useAuthStore from "@/app/_stores/authStore";
 import ComplaintTable from "@/app/_components/Admin/tables/complaint-tables/page";
 import useComplaintStore from "@/app/_stores/complaintStore";
+import useEmergencyStore from "@/app/_stores/emergencyStore";
+import EmergencyTable from "@/app/_components/Admin/tables/emergency";
 
 export default function Profile() {
-    const { user, hydrated } = useAuthStore(); // ✅ cek hydrated
+    const { user, hydrated } = useAuthStore();
     const { fetchComplaints } = useComplaintStore();
+    const { fetchEmergencies } = useEmergencyStore();
 
     useEffect(() => {
         fetchComplaints()
+        fetchEmergencies()
     }, []);
 
     if (!hydrated) {
         return <div className="p-6">Loading...</div>;
     }
+
+    if (!user) {
+        return (
+            <div className="text-center text-red-600 py-10">
+                Anda harus login terlebih dahulu untuk melihat profil.
+            </div>
+        );
+    }
+
+    if (!user) return null;
 
     return (
         <div className="mt-20 p-6">
@@ -47,14 +61,14 @@ export default function Profile() {
                 </div>
 
                 {/* Emergency */}
-                {/*<div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">*/}
-                {/*    <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-5">*/}
-                {/*        Your Emergency call History*/}
-                {/*    </h3>*/}
-                {/*    <div className="space-y-6">*/}
-                {/*        <EmergencyTable />*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+                <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+                    <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-5">
+                        Your Emergency call History
+                    </h3>
+                    <div className="space-y-6">
+                        <EmergencyTable />
+                    </div>
+                </div>
             </div>
         </div>
     );

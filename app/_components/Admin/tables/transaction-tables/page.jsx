@@ -1,92 +1,43 @@
 "use client";
 
-import { Dropdown } from "@/app/_components/Admin/ui/dropdown/Dropdown";
-import { DropdownItem } from "@/app/_components/Admin/ui/dropdown/DropdownItem";
 import React, { useEffect, useState } from "react";
 import { TableBody, TableCell, TableHeader, TableRow, Table } from "@/app/_components/Admin/ui/table";
-import { EllipsisVertical } from "lucide-react";
-import { useRouter } from "next/navigation";
-import useToastStore from "@/app/_stores/toastStore";
-import { getAllMerch } from "@/app/_services/merchService";
-import { deleteTransaction, getAllTransaction } from "@/app/_services/transactionService";
+import { Trash} from "lucide-react";
 import Badge from "../../ui/badge/Badge";
+import useToastStore from "@/app/_stores/toastStore";
+import useAuthStore from "@/app/_stores/authStore";
+import useTransactionStore from "@/app/_stores/transactionService";
 
 export default function TransactionTable() {
-  const [transactions, setTransactions] = useState([]);
-  const [merch, setMerch] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [openDropdownId, setOpenDropdownId] = useState(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const { showToast } = useToastStore();
-  const router = useRouter();
+  const { transactions, updateStatus, fetchTransaction, deleteTransaction } = useTransactionStore();
+  const { toast, showToast, hideToast } = useToastStore();
+  const { user, token } = useAuthStore();
 
-  const fetchTransaction = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllTransaction();
-      setTransactions(data || []);
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchTransaction();
   }, []);
 
-  useEffect(() => {
-    const fetchMerch = async () => {
-      try {
-        const merchData = await getAllMerch();
-        console.log("Produk berhasil diambil:", merchData);
-        setMerch(merchData);
-      } catch (error) {
-        console.error("Gagal mengambil produk:", error);
-      }
-    };
-
-    fetchMerch();
-  }, []);
-
-  useEffect(() => {
-    if (confirmDeleteId !== null) {
-      const timeout = setTimeout(() => {
-        setConfirmDeleteId(null);
-      }, 3000);
-      return () => clearTimeout(timeout);
+  const updateTransactionStatus = async (id, status) => {
+    try {
+      await updateStatus(token, id, status);
+      showToast("Status berhasil diperbarui", "success");
+    } catch (error) {
+      showToast("Gagal memperbarui status", "error");
     }
-  }, [confirmDeleteId]);
-
-  const toggleDropdown = (id) => {
-    setOpenDropdownId((prev) => (prev === id ? null : id));
-  };
-
-  const closeDropdown = () => {
-    setOpenDropdownId(null);
   };
 
   const handleDelete = async (id) => {
-    if (confirmDeleteId !== id) {
-      setConfirmDeleteId(id);
-      showToast("Klik lagi untuk konfirmasi hapus", "error");
-      return;
-    }
-
     try {
-      const token = localStorage.getItem("token");
-      await deleteTransaction(id, token);
-
-      closeDropdown();
-      showToast("Transaksi berhasil dihapus", "success");
-      setConfirmDeleteId(null);
-      fetchTransaction();
-    } catch (error) {
-      console.error("Gagal menghapus transaksi:", error);
-      showToast("Terjadi kesalahan saat menghapus transaksi", "error");
+      await deleteTransaction(id);
+      showToast("Data berhasil dihapus", "success");
+    } catch {
+      showToast("Gagal menghapus data", "error");
     }
   };
+
+
+  console.log("Transactions:", transactions);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -111,20 +62,26 @@ export default function TransactionTable() {
                   Status
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs">
+                  Alamat Pemesan
+                </TableCell>
+                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs">
                   Action
                 </TableCell>
               </TableRow>
             </TableHeader>
-            {/* <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {transactions.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
                       <div>
                         <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.order_number}</span>
-                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{item.author}</span>
+                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{item.user.name}</span>
                       </div>
                     </div>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-start">
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.merchandise.name}</span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
                     <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.quantity}</span>
@@ -133,89 +90,44 @@ export default function TransactionTable() {
                     <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.total_price}</span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.merchandise?.name || "Unknown"}</span>
+                    {user?.role === "admin" ? (
+                        <select
+                            value={item.status}
+                            onChange={(e) => updateTransactionStatus(item.id, e.target.value)}
+                            className="text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded px-2 py-1"
+                        >
+                          <option value="paid">Paid</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                    ) : (
+                        <Badge
+                            size="sm"
+                            color={
+                              item.status === "completed"
+                                  ? "success"
+                                  : item.status === "Shipped"
+                                      ? "warning"
+                                      : "error"
+                            }
+                        >
+                          {item.status}
+                        </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="px-3 py-3 text-start">
+                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.user.address}</span>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start">
-                    <Badge size="sm" color={item.status === "completed" ? "success" : item.status === "paid" ? "warning" : "error"}>
-                      {item.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start">
-                    <div className="relative inline-block">
-                      <button onClick={() => toggleDropdown(item.id)} className="dropdown-toggle">
-                        <EllipsisVertical className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
-                      </button>
-                      <Dropdown isOpen={openDropdownId === item.id} onClose={closeDropdown} className="w-40 p-2">
-                        <DropdownItem
-                          onItemClick={() => router.push(`/dashboard/transactions/detail/${item.slug}`)}
-                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:text-gray-400 dark:hover:text-gray-300"
-                        >
-                          Detail
-                        </DropdownItem>
-                        <DropdownItem
-                          onItemClick={() => router.push(`/dashboard/transactions/edit/${item.slug}`)}
-                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                        >
-                          Edit
-                        </DropdownItem>
-                        <DropdownItem onItemClick={() => handleDelete(item.id)} className="flex w-full font-normal text-left text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-white/5 dark:hover:text-red-400">
-                          {confirmDeleteId === item.id ? "Klik lagi untuk hapus" : "Delete"}
-                        </DropdownItem>
-                      </Dropdown>
-                    </div>
+                    <button
+                        onClick={() => handleDelete(item.id)}
+                        className="bg-rose-100 transition flex w-full items-center justify-center gap-2 rounded-full border border-gray-300  px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-rose-200 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
+                    >
+                      <Trash className="w-3 h-3 dark:text-white/90" />
+                    </button>
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody> */}
-            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                <TableRow>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">ORD-0001</span>
-                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">user123</span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">Kaos Hitam XL</span>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">1</span>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start">
-                    <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">60000</span>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start">
-                    <Badge size="sm" color="warning">
-                      paid
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start">
-                    <div className="relative inline-block">
-                      <button onClick="" className="dropdown-toggle">
-                        <EllipsisVertical className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
-                      </button>
-                      <Dropdown isOpen="" onClose="" className="w-40 p-2">
-                        <DropdownItem
-                          onItemClick="{() => router.push(`/dashboard/transactions/detail/${item.slug}`)}"
-                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:text-gray-400 dark:hover:text-gray-300"
-                        >
-                          Detail
-                        </DropdownItem>
-                        <DropdownItem
-                          onItemClick="{() => router.push(`/dashboard/transactions/edit/${item.slug}`)}"
-                          className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                        >
-                          Edit
-                        </DropdownItem>
-                        <DropdownItem onItemClick="{() => handleDelete(item.id)}" className="flex w-full font-normal text-left text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-white/5 dark:hover:text-red-400">
-                          Delete
-                        </DropdownItem>
-                      </Dropdown>
-                    </div>
-                  </TableCell>
-                </TableRow>
             </TableBody>
           </Table>
         </div>

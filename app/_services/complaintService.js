@@ -8,12 +8,10 @@ export const getAllComplaints = async () => {
         return response.data?.data || [];
     } catch (error) {
         if (error.response?.status === 404) {
-            // console.warn("Tidak ada data complaint ditemukan.");
-            return []; // amanin, tetap kembalikan array kosong
+            return [];
         }
 
-        // console.error("Gagal ambil complaint:", error);
-        return []; // fallback umum untuk error lain
+        return [];
     }
 };
 
@@ -22,12 +20,47 @@ export const getComplaintById = async (id) => {
     return response.data.data;
 };
 
-export const getDetailComplaint = async (slug) => {
-    const response = await axios.get(`${API_BASE_URL}/complaint/${slug}`);
-    return response.data.data;
-};
 
 export const deleteComplaintById = async (id) => {
     const response = await axios.delete(`${API_BASE_URL}/complaint/${id}`);
     return response.data.data;
+};
+
+export const submitFeedback = async (payload) => {
+    try {
+        const response = await axios.post(
+            `${API_BASE_URL}/feedback`,
+            payload,
+            {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Gagal mengirim feedback:", error);
+        throw error;
+    }
+};
+
+export const updateComplaintStatus = async (token, complaintId, status) => {
+    try {
+        const response = await axios.put(
+            `${API_BASE_URL}/complaint/${complaintId}`,
+            { status },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Gagal update status:", error);
+        throw error;
+    }
 };

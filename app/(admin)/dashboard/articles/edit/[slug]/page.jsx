@@ -2,10 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-    getDetailArticles,
-    updateArticle,
-} from "@/app/_services/articleService";
 import Label from "@/app/_components/Form/Label";
 import InputField from "@/app/_components/Form/input/InputField";
 import TextArea from "@/app/_components/Form/input/TextArea";
@@ -13,34 +9,37 @@ import DropZone from "@/app/_components/Form/form-elements/DropZone";
 import Button from "@/app/_components/Admin/ui/button/Button";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
 import useToastStore from "@/app/_stores/toastStore";
+import useArticleStore from "@/app/_stores/articleStore";
+import useAuthStore from "@/app/_stores/authStore";
 
 export default function ArticleEditPage() {
     const { slug } = useParams();
     const router = useRouter();
-
     const { showToast } = useToastStore();
-    const [article, setArticle] = useState(null);
-    const [form, setForm] = useState({ title: "", content: "", status: "" });
+    const { token } = useAuthStore();
+    const {
+        articles,
+        fetchArticles,
+        updateArticle: updateArticleStore,
+    } = useArticleStore();
+
+    const [form, setForm] = useState({ title: "", content: "", status: "draft" });
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        async function fetchArticle() {
-            try {
-                const result = await getDetailArticles(slug);
-                setArticle(result);
-                setForm({
-                    title: result.title || "",
-                    content: result.content || "",
-                    status: result.status || "",
-                });
-            } catch {
-                showToast("Gagal memuat artikel", "error");
-            }
-        }
+    const article = articles.find((a) => a.slug === slug);
 
-        if (slug) fetchArticle();
-    }, [slug, showToast]);
+    useEffect(() => {
+        if (!article) {
+            fetchArticles();
+        } else {
+            setForm({
+                title: article.title || "",
+                content: article.content || "",
+                status: article.status || "draft",
+            });
+        }
+    }, [article, fetchArticles]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -57,21 +56,16 @@ export default function ArticleEditPage() {
 
         setLoading(true);
 
-        const token = localStorage.getItem("token");
-        const formData = new FormData();
-        formData.append("title", form.title.trim());
-        formData.append("content", form.content.trim());
-        formData.append("status", form.status);
-        if (image) formData.append("image", image);
+        const data = new FormData();
+        data.append("title", form.title.trim());
+        data.append("content", form.content.trim());
+        data.append("status", form.status);
+        if (image) data.append("image", image);
 
         try {
-            await updateArticle(slug, token, formData);
+            await updateArticleStore(slug, token, data);
             showToast("Artikel berhasil diperbarui", "success");
-            setTimeout(() => {
-                router.push("/dashboard/articles");
-                console.log("Slug yang dikirim:", slug);
-                console.log("Data yang dikirim:", Object.fromEntries(formData));
-            }, 1500);
+            setTimeout(() => router.push("/dashboard/articles"), 1500);
         } catch (error) {
             showToast(
                 error?.response?.data?.message || "Gagal memperbarui artikel",
@@ -92,7 +86,7 @@ export default function ArticleEditPage() {
                         <Label htmlFor="title">Judul Artikel</Label>
                         <InputField
                             name="title"
-                            defaultValue={form.title}
+                            value={form.title}
                             onChange={handleChange}
                             placeholder="Masukkan judul"
                         />

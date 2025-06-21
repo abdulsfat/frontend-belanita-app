@@ -1,24 +1,28 @@
 "use client";
 
-import React from "react";
+import React, {useEffect} from "react";
 import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
-import useAuthStore from "@/app/_stores/authStore";
-import useToastStore from "@/app/_stores/toastStore";
-import EmergencyTable from "@/app/_components/Admin/tables/emergency-tables/page";
+import useEmergencyStore from "@/app/_stores/emergencyStore";
+import EmergencyTable from "@/app/_components/Admin/tables/emergency";
 
-export default function ListUsers() {
-  const { token } = useAuthStore();
-  const { showToast } = useToastStore();
+export default function ListComplaint() {
+    const { fetchEmergencies } = useEmergencyStore();
 
-  return (
-    <div>
-      <PageBreadcrumb pageTitle="Emergency Dashboard" />
-      <div className="space-y-6">
-        <ComponentCard title="List Emergency">
-          <EmergencyTable />
-        </ComponentCard>
-      </div>
-    </div>
-  );
+    useEffect(() => {
+        fetchEmergencies()
+    }, []);
+
+    return (
+        <div>
+            <PageBreadcrumb pageTitle="Pengaduan Dashboard" />
+            <div className="space-y-6">
+                <ComponentCard
+                    title="List Emergency Calls"
+                >
+                    <EmergencyTable />
+                </ComponentCard>
+            </div>
+        </div>
+    );
 }

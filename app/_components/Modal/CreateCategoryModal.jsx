@@ -9,15 +9,14 @@ import Switch from "@/app/_components/Form/switch/Switch";
 import DropZone from "@/app/_components/Form/form-elements/DropZone";
 import TextArea from "@/app/_components/Form/input/TextArea";
 import useArticleStore from "@/app/_stores/articleStore";
+import useMerchandiseStore from "@/app/_stores/merchandiseStore";
 
-export default function CreateArticleModal({ isOpen, onClose, showToast }) {
-    const { fetchArticles, createArticle } = useArticleStore();
+export default function CreateCategoryModal({ isOpen, onClose, showToast }) {
+    const { fetchCategories, createCategory } = useMerchandiseStore();
+
 
     const [formData, setFormData] = useState({
-        title: "",
-        content: "",
-        status: "draft",
-        image: null,
+        name: "",
     });
 
     const handleChange = (e) => {
@@ -25,53 +24,35 @@ export default function CreateArticleModal({ isOpen, onClose, showToast }) {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSwitchChange = (checked) => {
-        setFormData((prev) => ({
-            ...prev,
-            status: checked ? "published" : "draft",
-        }));
-    };
-
-    const handleFileSelect = (file) => {
-        setFormData((prev) => ({ ...prev, image: file }));
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.title.trim() || !formData.content.trim()) {
-            showToast("Judul dan konten tidak boleh kosong", "error");
+        if (!formData.name.trim()) {
+            showToast("Nama kategori tidak boleh kosong", "error");
             return;
         }
 
         try {
             const payload = new FormData();
-            payload.append("title", formData.title.trim());
-            payload.append("content", formData.content.trim());
-            payload.append("status", formData.status);
-            if (formData.image) {
-                payload.append("image", formData.image);
-            }
+            payload.append("name", formData.name.trim());
 
-            await createArticle( payload);
+            await createCategory(payload);
 
-            await fetchArticles();
+            await fetchCategories();
 
-            showToast("Artikel berhasil dibuat!", "success");
+            showToast("Category berhasil dibuat!", "success");
             onClose();
             handleReset();
         } catch (error) {
             console.error(error);
-            showToast("Terjadi kesalahan saat membuat artikel.", "error");
+            showToast("Terjadi kesalahan saat membuat Category.", "error");
         }
     };
 
     const handleReset = () => {
         setFormData({
-            title: "",
-            content: "",
-            status: "draft",
-            image: null,
+            name: "",
         });
     };
 
@@ -80,44 +61,24 @@ export default function CreateArticleModal({ isOpen, onClose, showToast }) {
             <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
                 <div className="px-2 pr-14">
                     <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-                        Create Article
+                        Form Create Category
                     </h4>
                     <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-                        Create your article
+                        Create your category here. You can add a name.
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
                         <div className="grid grid-cols-1 gap-6">
-                            <DropZone onFileSelect={handleFileSelect} />
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-center">
-                                <Switch
-                                    label={formData.status === "published" ? "Published" : "Draft"}
-                                    defaultChecked={formData.status === "published"}
-                                    onChange={handleSwitchChange}
-                                />
-                            </div>
 
                             <div>
-                                <Label>Title</Label>
+                                <Label>Nama Kategori</Label>
                                 <Input
-                                    name="title"
-                                    value={formData.title}
+                                    name="name"
+                                    value={formData.name}
                                     onChange={handleChange}
-                                    placeholder="Article title"
-                                />
-                            </div>
-
-                            <div>
-                                <Label>Content</Label>
-                                <TextArea
-                                    name="content"
-                                    value={formData.content}
-                                    onChange={handleChange}
-                                    rows={5}
-                                    placeholder="Article content"
+                                    placeholder="Apparel"
                                 />
                             </div>
                         </div>
@@ -131,7 +92,7 @@ export default function CreateArticleModal({ isOpen, onClose, showToast }) {
                             Reset
                         </Button>
                         <Button type="submit" size="sm">
-                            Create Article
+                            Create Category
                         </Button>
                     </div>
                 </form>

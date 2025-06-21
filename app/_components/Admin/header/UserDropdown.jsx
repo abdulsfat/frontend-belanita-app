@@ -8,20 +8,15 @@ import useAuthStore from "@/app/_stores/authStore";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import {logoutUser} from "@/app/_services/authService";
+import useToastStore from "@/app/_stores/toastStore";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const router = useRouter();
+  const { showToast } = useToastStore();
   const { user, setAuth, logout } = useAuthStore();
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token");
-    if (savedUser && savedToken) {
-      setAuth(JSON.parse(savedUser), savedToken);
-    }
-  }, [setAuth]);
 
   const toggleDropdown = (e) => {
     e.stopPropagation();
@@ -41,23 +36,16 @@ export default function UserDropdown() {
   }, []);
 
   const handleLogout = async () => {
-    const token = localStorage.getItem("token");
-
-    const success = await logoutUser(token);
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    logout();
-
-    setTimeout(() => {
-      router.push("/");
-    }, 10);
-
-    if (!success) {
-      console.warn("Logout gagal");
+    try {
+      await logoutUser();
+    } catch (err) {
+      console.warn("Logout gagal:", err);
     }
-  };
 
+    logout();
+    router.push("/");
+    showToast("Berhasil logout", "success");
+  };
 
   if (!user) return null;
 

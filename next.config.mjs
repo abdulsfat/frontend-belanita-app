@@ -1,9 +1,10 @@
-// next.config.mjs
 const nextConfig = {
+  // matcher: ["/profile", "/dashboard", "/login", "/register"],
   reactStrictMode: true,
   images: {
     domains: ["127.0.0.1", "localhost"],
-    // domains: ["172.20.10.3"],
+    // domains: ["192.168.18.204"],
+
   },
   webpack(config) {
     config.module.rules.push({
@@ -12,29 +13,23 @@ const nextConfig = {
         {
           loader: "@svgr/webpack",
           options: {
-            icon: true,
-          },
-        },
-      ],
+            icon: true
+          }
+        }
+      ]
     });
     return config;
   },
-  matcher: ["/profile", "/dashboard", "/login", "/register"],
-   reactStrictMode: true,
-    images: {
-        domains: ["127.0.0.1", "localhost"],
-        // domains: ["192.168.18.204"],
-
-    },
   experimental: {
     turbo: {
       rules: {
         "*.svg": {
           loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-      },
-  },
+          as: "*.js"
+        }
+      }
+    }
+  }
 };
 
 export default nextConfig;

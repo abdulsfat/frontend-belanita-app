@@ -2,34 +2,21 @@
 
 import { Card, HeroArticle, Pagination } from "@/components";
 import { useEffect, useState } from "react";
-import { getArticles } from "@/app/_services/articleService";
+import useArticleStore from "@/app/_stores/articleStore";
 
 export default function Article() {
     const [currentPage, setCurrentPage] = useState(1);
-    const [articleItems, setArticleItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { articles, fetchArticles } = useArticleStore();
 
     const itemsPerPage = 9;
 
     useEffect(() => {
-        const fetchArticles = async () => {
-            setIsLoading(true);
-            try {
-                const data = await getArticles();
-                setArticleItems(data);
-            } catch (error) {
-                console.error("Gagal mengambil artikel:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchArticles();
+        fetchArticles()
     }, []);
 
-    const totalPages = Math.ceil(articleItems.length / itemsPerPage);
+    const totalPages = Math.ceil(articles.length / itemsPerPage);
 
-    const displayedItems = articleItems.slice(
+    const displayedItems = articles.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );

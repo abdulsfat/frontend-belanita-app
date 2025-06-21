@@ -9,7 +9,6 @@ export * from "./TextSlide";
 export * from "./Card";
 export * from "./ProgressBar";
 export * from "./Pagination";
-export * from "./Input";
 export * from "./Form";
 export * from "./Footer";
 

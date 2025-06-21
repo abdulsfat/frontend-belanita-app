@@ -5,7 +5,7 @@ import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
 import useAuthStore from "@/app/_stores/authStore";
 import useToastStore from "@/app/_stores/toastStore";
-import UsersTable from "@/app/_components/Admin/tables/users-tables/page";
+import UsersTable from "@/app/_components/Admin/tables/UserTable";
 
 export default function ListUsers() {
     const { token } = useAuthStore();

@@ -14,7 +14,7 @@ import useAuthStore from "@/app/_stores/authStore";
 export default function AdminLayout({ children }) {
     const { isExpanded, isHovered, isMobileOpen } = useSidebar();
     const {toast, hideToast} = useToastStore();
-    const { isOpen, modalType, closeModal } = useModal();
+    const { isOpen, modalType, modalData, closeModal } = useModal();
     const { token } = useAuthStore();
     const { showToast } = useToastStore();
     const mainContentMargin = isMobileOpen
@@ -41,6 +41,7 @@ export default function AdminLayout({ children }) {
                 getModalComponent(modalType, {
                     isOpen,
                     onClose: closeModal,
+                    ...modalData,
                     token,
                     showToast,
                 })}

@@ -2,34 +2,22 @@
 
 import { Card, Pagination } from "@/components";
 import { useEffect, useState } from "react";
-import {getMerch} from "@/app/_services/merchService";
+import useMerchandiseStore from "@/app/_stores/merchandiseStore";
 
 export default function Merchendise() {
     const [currentPage, setCurrentPage] = useState(1);
-    const [merchItems, setMerchItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+
+    const { merchandises, fetchMerchandises } = useMerchandiseStore()
 
     const itemsPerPage = 9;
 
     useEffect(() => {
-        const fetchMerch = async () => {
-            setIsLoading(true);
-            try {
-                const data = await getMerch();
-                setMerchItems(data);
-            } catch (error) {
-                console.error("Error fetching merch data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchMerch();
+        fetchMerchandises()
     }, []);
 
-    const totalPages = Math.ceil(merchItems.length / itemsPerPage);
+    const totalPages = Math.ceil(merchandises.length / itemsPerPage);
 
-    const displayedItems = merchItems.slice(
+    const displayedItems = merchandises.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );

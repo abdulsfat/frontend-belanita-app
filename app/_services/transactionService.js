@@ -13,16 +13,35 @@ export const getDetailTransaction = async (slug) => {
   return response.data.data;
 };
 
-export const deleteTransaction = async (id, token) => {
-  return axios.delete(`${API_BASE_URL}/order/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const deleteTransaction = async (id) => {
+  const response = await axios.delete(`${API_BASE_URL}/order/${id}`);
+  return response.data.message;
 };
 
-export const updateTransaction = async (slug, token, data) => {
-  const response = await axios.post(`${API_BASE_URL}/order/${slug}?_method=PUT`, data, {
+export const updateTransactionStatus = async (token, id, status) => {
+  try {
+    const response = await axios.put(
+        `${API_BASE_URL}/order/${id}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+    );
+
+    console.log("🧾 Full response dari server:", response.data); // cek ini juga
+    return response.data.data; // pastikan ini sesuai struktur dari backend
+  } catch (error) {
+    console.error("❌ Gagal update status (service):", error.response?.data || error);
+    throw error;
+  }
+};
+
+export const updateTransaction = async (id, token, data) => {
+  const response = await axios.post(`${API_BASE_URL}/order/${id}?_method=PUT`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",

@@ -6,63 +6,69 @@ export const getAllMerch = async () => {
   const response = await axios.get(`${API_BASE_URL}/merchandise`);
   return response.data.data;
 };
+//
+// export const getMerchBySlug = async (slug) => {
+//   const response = await axios.get(`${API_BASE_URL}/merchandise/${slug}`);
+//   return response.data.data;
+// };
 
-export const getDetailMerch = async (slug) => {
-  const response = await axios.get(`${API_BASE_URL}/merchandise/${slug}`);
-  return response.data.data;
-};
-
-export const createMerch = async (token, data) => {
+export const createMerch = async (data) => {
   const response = await axios.post(`${API_BASE_URL}/merchandise`, data, {
     headers: {
-      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   });
   return response.data.data;
 };
 
-export const getCategories = async (id, token) => {
+export const createCategory = async (data) => {
+  const response = await axios.post(`${API_BASE_URL}/category`, data);
+  return response.data.data;
+};
+
+export const getCategories = async (id) => {
   const response = await axios.get(`${API_BASE_URL}/category`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
   return response.data.data;
 };
 
-export const getMerchById = async (id, token) => {
-  const response = await axios.get(`${API_BASE_URL}/merchandise/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data.data;
-};
 
-export const deleteMerch = async (id, token) => {
+export const deleteMerchById = async (id) => {
   return axios.delete(`${API_BASE_URL}/merchandise/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 };
 
-export const getRandomMerchExceptSlug = async (slug, limit = 3) => {
-  const response = await axios.get(`${API_BASE_URL}/merchandise`);
-  const all = response.data.data;
-
-  const filtered = all.filter((item) => item.slug !== slug);
-  const shuffled = filtered.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, limit);
+export const deleteCategoryById = async (id) => {
+  return axios.delete(`${API_BASE_URL}/category/${id}`, {
+  });
 };
 
-export const orderMerchandise = async (token, data) => {
+
+export const updateCategory = async (id, data) => {
+  try {
+    const response = await axios.put(
+        `${API_BASE_URL}/category/${id}`,
+        data
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Gagal update category:", error);
+    throw error;
+  }
+};
+
+
+export const orderMerchandise = async ( data) => {
     const response = await axios.post(`${API_BASE_URL}/order`, data );
     return response.data.data;
 };
 
-export const updateMerch = async (slug, token, data) => {
-  const response = await axios.post(`${API_BASE_URL}/merchandise/${slug}?_method=PUT`, data );
+export const updateMerch = async (id, data) => {
+  const response = await axios.post(`${API_BASE_URL}/merchandise/${id}?_method=PUT`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  } );
   return response.data.data;
 };
+
