@@ -12,7 +12,7 @@ import useToastStore from "@/app/_stores/toastStore";
 
 export default function EditProfileModal({ isOpen, onClose, user }) {
     const { token } = useAuthStore();
-    const { fetchUsers, updateUser } = useUsersStore();
+    const { updateUser } = useUsersStore();
     const { showToast } = useToastStore();
 
 
@@ -47,19 +47,12 @@ export default function EditProfileModal({ isOpen, onClose, user }) {
             formData.append("email", form.email);
             formData.append("phone_number", form.phone_number);
             formData.append("address", form.address);
-            formData.append("balance", balance); // ✅ tambahkan saldo
-            if (form.image) formData.append("image", form.image); // ✅ ganti gambar kalau ada
+            formData.append("balance", balance);
+            if (form.image) formData.append("image", form.image);
 
             const updatedUser = await updateUser(token, formData);
 
-            console.log("data:", updatedUser);
             useAuthStore.getState().setAuth(updatedUser, token);
-
-            // await useAuthStore.getState().refreshUserProfile();
-
-
-            console.log("🔄 Updated User:", updatedUser);
-            console.log("🔥 Current Store User:", useAuthStore.getState().user);
 
             showToast("Berhasil memperbarui profil", "success");
             onClose();

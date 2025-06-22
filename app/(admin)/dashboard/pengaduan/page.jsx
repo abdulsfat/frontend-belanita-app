@@ -3,7 +3,7 @@
 import React, {useEffect} from "react";
 import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
-import ComplaintTable from "@/app/_components/Admin/tables/complaint-tables/page";
+import ComplaintTable from "@/app/_components/Admin/tables/ComplaintTable";
 import useComplaintStore from "@/app/_stores/complaintStore";
 
 export default function ListComplaint() {

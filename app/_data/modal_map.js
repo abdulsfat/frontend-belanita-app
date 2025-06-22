@@ -7,6 +7,7 @@ import DetailComplaintModal from "@/app/_components/Modal/DetailComplaintModal";
 import CreateMerchModal from "@/app/_components/Modal/CreateMerchModal";
 import CreateCategoryModal from "@/app/_components/Modal/CreateCategoryModal";
 import EditProfileModal from "@/app/_components/Modal/EditProfileModal";
+import TopUpModal from "@/app/_components/Modal/TopUpModal";
 
 export const getModalComponent = (modalType, props) => {
     switch (modalType) {
@@ -16,6 +17,8 @@ export const getModalComponent = (modalType, props) => {
             return <EditProfileModal {...props} />;
         case "CREATE_MERCH":
             return <CreateMerchModal {...props} />;
+        case "TOP_UP":
+            return <TopUpModal {...props} />;
         case "CREATE_CATEGORY":
             return <CreateCategoryModal {...props} />;
         case "EMERGENCY":

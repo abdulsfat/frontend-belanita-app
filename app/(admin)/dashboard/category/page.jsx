@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
-import ArticleTable from "@/app/_components/Admin/tables/article-tables/page";
+import ArticleTable from "@/app/_components/Admin/tables/ArticleTable";
 import { useModal } from "@/app/_hooks/useModal";
 import useAuthStore from "@/app/_stores/authStore";
 import useToastStore from "@/app/_stores/toastStore";

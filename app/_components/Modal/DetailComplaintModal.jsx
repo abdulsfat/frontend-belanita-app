@@ -3,7 +3,7 @@
 import { Modal } from "@/app/_components/Admin/ui/modal";
 import Label from "@/app/_components/Form/Label";
 import moment from "moment";
-import Image from "next/image";
+import SafeImage from "@/app/_components/Admin/common/SafeImage";
 
 export default function DetailComplaintModal({ isOpen, onClose, complaint }) {
     if (!isOpen || !complaint) return null;
@@ -18,10 +18,10 @@ export default function DetailComplaintModal({ isOpen, onClose, complaint }) {
 
                     {/* Gambar */}
                     <div className="relative w-full aspect-video rounded-lg overflow-hidden border mb-6">
-                        <Image
+                        <SafeImage
                             src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${complaint.image}`}
                             alt="Gambar Pengaduan"
-                            layout="fill"
+                            fill
                             objectFit="cover"
                         />
                     </div>

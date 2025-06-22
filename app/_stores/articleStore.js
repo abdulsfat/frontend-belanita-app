@@ -11,7 +11,6 @@ const useArticleStore = create((set, get) => ({
     fetchArticles: async () => {
         set({ isLoading: true });
         try {
-            console.log("AXIOS DEFAULT HEADERS:", axios.defaults.headers.common);
             const data = await getAllArticles();
             set({ articles: data || [] });
         } catch (error) {

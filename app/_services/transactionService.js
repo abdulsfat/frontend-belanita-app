@@ -1,4 +1,3 @@
-// services/articleService.js
 import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BACKEND_URL;
@@ -32,10 +31,9 @@ export const updateTransactionStatus = async (token, id, status) => {
         }
     );
 
-    console.log("🧾 Full response dari server:", response.data); // cek ini juga
-    return response.data.data; // pastikan ini sesuai struktur dari backend
+    return response.data.data;
   } catch (error) {
-    console.error("❌ Gagal update status (service):", error.response?.data || error);
+    console.error("Gagal update status (service):", error.response?.data || error);
     throw error;
   }
 };

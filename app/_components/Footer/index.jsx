@@ -11,10 +11,10 @@ export default function Footer() {
                 {/* Kiri */}
                 <div className="flex flex-col gap-4 col-span-1">
                     <div className="flex items-center gap-2">
-                        <Image src="/logo.png" alt="Belanita" width={140} height={140} />
+                        <Image src="/logo.png" alt="Belanita" width={140} height={140} className="h-auto"/>
                     </div>
                     <p className="text-sm text-gray-700 leading-relaxed">
-                        Championing Women's Rights: Empowering Voices,<br />
+                        Championing Women's Rights: Empowering Voices,<br/>
                         Ensuring Equality for a Just and Inclusive Future.
                     </p>
                     <p className="text-xs text-gray-500 mt-4">

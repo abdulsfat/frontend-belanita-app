@@ -37,10 +37,8 @@ export const updateEmergencyStatus = async (token, id, status) => {
             }
         );
 
-        console.log("🧾 Full response dari server:", response.data); // cek ini juga
-        return response.data.data; // pastikan ini sesuai struktur dari backend
+        return response.data.data;
     } catch (error) {
-        console.error("❌ Gagal update status (service):", error.response?.data || error);
         throw error;
     }
 };
