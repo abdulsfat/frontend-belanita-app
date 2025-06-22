@@ -9,6 +9,7 @@ import CustomToast from "@/app/_components/Toast/CustomToast";
 import { useModal } from "@/app/_hooks/useModal";
 import useToastStore from "@/app/_stores/toastStore";
 import useMerchandiseStore from "@/app/_stores/merchandiseStore";
+import SafeImage from "@/app/_components/Admin/common/SafeImage";
 
 
 export default function DetailMerchandisePage() {
@@ -41,6 +42,11 @@ export default function DetailMerchandisePage() {
         }
     }, [slug]);
 
+    useEffect(() => {
+        const updated = getMerchBySlug(slug);
+        if (updated) setLocalMerch(updated);
+    }, [merchandises, slug]);
+
     if (!localMerch) return <div className="text-center py-20">Loading...</div>;
 
     return (
@@ -48,9 +54,12 @@ export default function DetailMerchandisePage() {
             <div className="px-4 mt-5 sm:px-6 lg:px-12 lg:flex gap-6">
                 {/* Gambar utama */}
                 <div className="lg:w-[50%]">
-                    <img
+                    <SafeImage
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${localMerch.image}`}
                         alt={localMerch.name}
+                        width={500}
+                        height={500}
+                        priority
                         className="rounded-3xl shadow-lg lg:h-[32rem] w-full object-cover mb-10"
                     />
                 </div>

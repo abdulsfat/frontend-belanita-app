@@ -58,9 +58,15 @@ export const updateCategory = async (id, data) => {
 };
 
 
-export const orderMerchandise = async ( data) => {
-    const response = await axios.post(`${API_BASE_URL}/order`, data );
-    return response.data.data;
+export const orderMerchandise = async (token, data) => {
+  const response = await axios.post(`${API_BASE_URL}/order`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+
+  return response.data.data;
 };
 
 export const updateMerch = async (id, data) => {

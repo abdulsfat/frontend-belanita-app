@@ -1,12 +1,7 @@
 'use client'
 
-import React, {useEffect} from "react";
 
 import UserMetaCard from "@/app/_components/Admin/user-profile/UserMetaCard";
-import useAuthStore from "@/app/_stores/authStore";
-import useComplaintStore from "@/app/_stores/complaintStore";
-import useUsersStore from "@/app/_stores/userStore";
-
 
 export default function Profile() {
 
@@ -19,8 +14,6 @@ export default function Profile() {
         <div className="space-y-6">
           <UserMetaCard
           />
-          {/*<UserInfoCard />*/}
-          {/*<UserAddressCard />*/}
         </div>
       </div>
     </div>

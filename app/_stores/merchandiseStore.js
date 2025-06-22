@@ -21,7 +21,6 @@ const useMerchandiseStore
     fetchMerchandises: async () => {
         set({ isLoading: true });
         try {
-            console.log("AXIOS DEFAULT HEADERS:", axios.defaults.headers.common);
             const data = await getAllMerch();
             set({ merchandises: data || [] });
         } catch (error) {

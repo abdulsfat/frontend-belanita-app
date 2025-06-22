@@ -3,7 +3,7 @@
 import React, {useEffect} from "react";
 import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
-import TransactionTable from "@/app/_components/Admin/tables/transaction-tables/page";
+import TransactionTable from "@/app/_components/Admin/tables/TransactionTable";
 import useTransactionStore from "@/app/_stores/transactionService";
 
 

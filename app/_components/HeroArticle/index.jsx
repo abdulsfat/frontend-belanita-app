@@ -1,12 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ProgressBar } from "@/components";
 import useArticleStore from "@/app/_stores/articleStore";
-import { getArticles } from "@/app/_services/articleService";
+import SafeImage from "@/app/_components/Admin/common/SafeImage";
 
 export function HeroArticle() {
     const { articles, fetchArticles } = useArticleStore();
@@ -70,10 +69,11 @@ export function HeroArticle() {
         <section className="relative w-full h-[42rem] rounded-4xl">
             <div className="relative rounded-4xl w-full h-full overflow-hidden">
                 <div className="absolute inset-0 animate-zoomInFade">
-                    <Image
+                    <SafeImage
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${active.image}`}
                         alt={active.title}
                         fill
+                        priority
                         className="w-full h-full object-cover"
                     />
                 </div>

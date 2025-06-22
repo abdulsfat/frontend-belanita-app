@@ -36,7 +36,6 @@ const useEmergencyStore = create((set) => ({
     updateStatus: async (token, id, status) => {
         try {
             const updated = await updateEmergencyStatus(token, id, status);
-            console.log("✅ Updated from server:", updated); // pindah ke sini
 
             set((state) => ({
                 emergencies: state.emergencies.map((e) =>
@@ -44,7 +43,7 @@ const useEmergencyStore = create((set) => ({
                 ),
             }));
         } catch (error) {
-            console.error("❌ Gagal update status:", error);
+            console.error("Gagal update status:", error);
             throw error;
         }
     },

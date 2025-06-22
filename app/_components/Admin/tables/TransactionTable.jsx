@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { TableBody, TableCell, TableHeader, TableRow, Table } from "@/app/_components/Admin/ui/table";
 import { Trash} from "lucide-react";
-import Badge from "../../ui/badge/Badge";
+import Badge from "../ui/badge/Badge";
 import useToastStore from "@/app/_stores/toastStore";
 import useAuthStore from "@/app/_stores/authStore";
 import useTransactionStore from "@/app/_stores/transactionService";
@@ -35,9 +35,6 @@ export default function TransactionTable() {
       showToast("Gagal menghapus data", "error");
     }
   };
-
-
-  console.log("Transactions:", transactions);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">

@@ -12,6 +12,7 @@ import moment from "moment";
 import useAuthStore from "@/app/_stores/authStore";
 import useToastStore from "@/app/_stores/toastStore";
 import useGoBack from "@/app/_hooks/useGoBack";
+import SafeImage from "@/app/_components/Admin/common/SafeImage";
 
 export default function PengaduanDetail() {
     const { id } = useParams();
@@ -58,8 +59,6 @@ export default function PengaduanDetail() {
             message: feedbackText,
         };
 
-        console.log("🔁 Kirim feedback:", payload);
-
         setLoadingSubmit(true);
         try {
             await submitFeedback(token, payload);
@@ -75,7 +74,7 @@ export default function PengaduanDetail() {
             }));
             setFeedbackText("");
         } catch (error) {
-            console.error("❌ Gagal mengirim feedback:", error.response?.data || error.message);
+            console.error("Gagal mengirim feedback:", error.response?.data || error.message);
             showToast("Gagal mengirim tanggapan", "error");
         } finally {
             setLoadingSubmit(false);
@@ -86,16 +85,11 @@ export default function PengaduanDetail() {
         const newStatus = e.target.value;
         setStatus(newStatus);
 
-        console.log("🔁 Update status:", {
-            complaint_id: localComplaint.id,
-            status: newStatus,
-        });
-
         try {
             await updateStatus(token, localComplaint.id, newStatus);
             showToast("Status diperbarui", "success");
         } catch (error) {
-            console.error("❌ Gagal update status:", error.response?.data || error.message);
+            console.error("Gagal update status:", error.response?.data || error.message);
             showToast("Gagal memperbarui status", "error");
         }
 
@@ -111,10 +105,10 @@ export default function PengaduanDetail() {
             <ComponentCard title="Detail Complaint" action="Kembali" onclick={goBack}>
                 <div className="mb-6">
                     <div className="relative w-full max-w-sm aspect-video rounded-lg overflow-hidden border">
-                        <Image
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${localComplaint.image}`}
+                        <SafeImage
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${localComplaint.image}`}
                             alt="Gambar Artikel"
-                            layout="fill"
+                            fill
                             objectFit="cover"
                         />
                     </div>

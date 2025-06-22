@@ -4,7 +4,6 @@ import {
     deleteComplaintById,
     submitFeedback
 } from "@/app/_services/complaintService";
-import axios from "axios";
 import * as complaintService from "@/app/_services/complaintService";
 
 const useComplaintStore = create((set, get) => ({
@@ -16,7 +15,6 @@ const useComplaintStore = create((set, get) => ({
     fetchComplaints: async () => {
         set({ isLoading: true });
         try {
-            console.log("AXIOS DEFAULT HEADERS:", axios.defaults.headers.common);
             const data = await getAllComplaints();
             set({ complaints: data || [] });
         } catch (error) {
@@ -67,12 +65,10 @@ const useComplaintStore = create((set, get) => ({
 
     updateStatus: async (token, complaintId, status) => {
         try {
-            console.log("🔄 Update status:", { complaint_id: complaintId, status });
             const res = await complaintService.updateComplaintStatus(token, complaintId, status);
-            console.log("✅ Status updated:", res);
             return res;
         } catch (error) {
-            console.error("❌ Gagal update status:", error);
+            console.error("Gagal update status:", error);
             throw error;
         }
     }

@@ -63,7 +63,6 @@ export default function LoginForm() {
             if (error.response?.status === 401) {
                 showToast("Email atau password salah.", "info");
             } else {
-                console.log(error);
                 showToast("Terjadi kesalahan saat login.", "error");
             }
         } finally {

@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useToastStore from "@/app/_stores/toastStore";
 import useMerchandiseStore from "@/app/_stores/merchandiseStore";
+import SafeImage from "@/app/_components/Admin/common/SafeImage";
 
 export default function MerchandiseTable() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function MerchandiseTable() {
                   <TableCell className="px-4 py-3 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
                       <div className="max-w-full overflow-hidden ">
-                        <Image width={100} height={80} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.image}`} alt={item.name} />
+                        <SafeImage width={100} height={80} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.image}`} alt={item.name} />
                       </div>
                       <div>
                         <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.name}</span>

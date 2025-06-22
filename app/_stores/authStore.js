@@ -51,7 +51,6 @@ const useAuthStore = create(
                 if (token) {
                     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
                     axios.defaults.headers.common["Content-Type"] = "application/json";
-                    console.log("🔥 Token & headers restored via onRehydrateStorage");
                 }
                 setTimeout(() => {
                     state?.setState?.({ hydrated: true });
