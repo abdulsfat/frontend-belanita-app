@@ -1,8 +1,6 @@
 "use client";
 
-import { Dropdown } from "@/app/_components/Admin/ui/dropdown/Dropdown";
-import { DropdownItem } from "@/app/_components/Admin/ui/dropdown/DropdownItem";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     TableBody,
     TableCell,
@@ -11,18 +9,18 @@ import {
     Table,
 } from "@/app/_components/Admin/ui/table";
 import Badge from "@/app/_components/Admin/ui/badge/Badge";
-
-import { Trash} from "lucide-react";
+import {Trash} from "lucide-react";
 import moment from "moment";
 import useToastStore from "@/app/_stores/toastStore";
-import CustomToast from "@/app/_components/Toast/CustomToast";
 import useEmergencyStore from "@/app/_stores/emergencyStore";
 import useAuthStore from "@/app/_stores/authStore";
+import useConfirmStore from "@/app/_stores/confirmStore";
 
 export default function EmergencyTable() {
-    const { emergencies,updateStatus, fetchEmergencies, deleteEmergency } = useEmergencyStore();
-    const { toast, showToast, hideToast } = useToastStore();
-    const { user, token } = useAuthStore();
+    const {emergencies, updateStatus, fetchEmergencies, deleteEmergency} = useEmergencyStore();
+    const {toast, showToast, hideToast} = useToastStore();
+    const {user, token} = useAuthStore();
+    const showConfirm = useConfirmStore((state) => state.showConfirm);
 
 
     useEffect(() => {
@@ -39,38 +37,52 @@ export default function EmergencyTable() {
         }
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await deleteEmergency(id);
-            showToast("Data berhasil dihapus", "success");
-        } catch {
-            showToast("Gagal menghapus data", "error");
-        }
+
+    const handleDelete = (id) => {
+        showConfirm({
+            title: "Hapus Emergency",
+            message: "Apakah kamu yakin ingin menghapus emergency ini?",
+            onConfirm: async () => {
+                try {
+                    await deleteEmergency(id);
+                    showToast("Emergency berhasil dihapus", "success");
+                    fetchEmergencies();
+                } catch (error) {
+                    showToast("Terjadi kesalahan saat menghapus emergency", "error");
+                }
+            },
+        });
     };
 
 
     return (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div
+            className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
                 <div className="min-w-fit">
                     <Table>
                         <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                             <TableRow>
-                                <TableCell isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
+                                <TableCell isHeader
+                                           className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
                                     Date
                                 </TableCell>
                                 {user?.role === "admin" && (
-                                    <TableCell isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
+                                    <TableCell isHeader
+                                               className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
                                         User
                                     </TableCell>
                                 )}
-                                <TableCell isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
+                                <TableCell isHeader
+                                           className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
                                     Contacted Via
                                 </TableCell>
-                                <TableCell isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
+                                <TableCell isHeader
+                                           className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
                                     Status
                                 </TableCell>
-                                <TableCell isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
+                                <TableCell isHeader
+                                           className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
                                     Action
                                 </TableCell>
                             </TableRow>
@@ -80,7 +92,8 @@ export default function EmergencyTable() {
                                 <TableRow key={item.id}>
                                     <TableCell className="px-5 py-4 text-start">
                                         <div className="flex flex-col gap-1">
-                                            <span className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                                            <span
+                                                className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
                                                 {moment(item.created_at).locale("id").format("D MMMM YYYY")}
                                             </span>
                                         </div>
@@ -88,7 +101,8 @@ export default function EmergencyTable() {
                                     {user?.role === "admin" && (
                                         <TableCell className="px-5 py-4 text-start">
                                             <div className="flex flex-col gap-1">
-                                                <span className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                                                <span
+                                                    className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
                                                     {item.user?.name || `ID ${item.user_id}`}
                                                 </span>
                                             </div>
@@ -96,7 +110,8 @@ export default function EmergencyTable() {
                                     )}
                                     <TableCell className="px-5 py-4 text-start">
                                         <div className="flex flex-col gap-1">
-                                            <span className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                                            <span
+                                                className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
                                                 {item.contacted_via}
                                             </span>
                                         </div>
@@ -131,7 +146,7 @@ export default function EmergencyTable() {
                                             onClick={() => handleDelete(item.id)}
                                             className="bg-rose-100 transition flex w-full items-center justify-center gap-2 rounded-full border border-gray-300  px-4 py-2 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-rose-200 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
                                         >
-                                            <Trash className="w-4 h-4 dark:text-white/90" />
+                                            <Trash className="w-4 h-4 dark:text-white/90"/>
                                             Delete
                                         </button>
                                     </TableCell>

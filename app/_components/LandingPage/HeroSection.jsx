@@ -1,4 +1,4 @@
-import { ButtonEmergency } from "@/app/_components";
+import { ButtonEmergency } from "@/components";
 import Image from "next/image";
 
 export function HeroSection() {

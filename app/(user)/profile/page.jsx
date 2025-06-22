@@ -34,9 +34,6 @@ export default function Profile() {
 
     if (!user) return null;
 
-    console.log("User Profile:", user);
-    console.log("Complaints:", useComplaintStore.getState().complaints);
-
     return (
         <div className="mt-20 p-6">
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

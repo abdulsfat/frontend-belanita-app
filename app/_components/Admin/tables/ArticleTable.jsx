@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Badge from "@/app/_components/Admin/ui/badge/Badge";
-import { Dropdown } from "@/app/_components/Admin/ui/dropdown/Dropdown";
-import { DropdownItem } from "@/app/_components/Admin/ui/dropdown/DropdownItem";
-import React, { useEffect, useState } from "react";
+import {Dropdown} from "@/app/_components/Admin/ui/dropdown/Dropdown";
+import {DropdownItem} from "@/app/_components/Admin/ui/dropdown/DropdownItem";
+import React, {useEffect, useState} from "react";
 import {
     TableBody,
     TableCell,
@@ -12,28 +12,20 @@ import {
     TableRow,
     Table,
 } from "@/app/_components/Admin/ui/table";
-import { useRouter } from "next/navigation";
-import { EllipsisVertical } from "lucide-react";
+import {useRouter} from "next/navigation";
+import {EllipsisVertical} from "lucide-react";
 import useToastStore from "@/app/_stores/toastStore";
 import useArticleStore from "@/app/_stores/articleStore";
 import SafeImage from "@/app/_components/Admin/common/SafeImage";
+import useConfirmStore from "@/app/_stores/confirmStore";
 
 export default function ArticleTable() {
     const router = useRouter();
     const [openDropdownId, setOpenDropdownId] = useState(null);
-    const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-    const { showToast } = useToastStore();
-    const { deleteArticle, articles } = useArticleStore();
+    const {showToast} = useToastStore();
+    const {deleteArticle, articles} = useArticleStore();
+    const showConfirm = useConfirmStore((state) => state.showConfirm);
 
-
-    useEffect(() => {
-        if (confirmDeleteId !== null) {
-            const timeout = setTimeout(() => {
-                setConfirmDeleteId(null);
-            }, 3000);
-            return () => clearTimeout(timeout);
-        }
-    }, [confirmDeleteId]);
 
     const toggleDropdown = (id) => {
         setOpenDropdownId((prev) => (prev === id ? null : id));
@@ -43,35 +35,38 @@ export default function ArticleTable() {
         setOpenDropdownId(null);
     };
 
-    const handleDelete = async (id) => {
-        if (confirmDeleteId !== id) {
-            setConfirmDeleteId(id);
-            showToast("Klik lagi untuk konfirmasi hapus", "error");
-            return;
-        }
 
-        try {
-            await deleteArticle(id);
-            showToast("Artikel berhasil dihapus", "success");
-        } catch (error) {
-            showToast("Terjadi kesalahan saat menghapus artikel", "error");
-        } finally {
-            setConfirmDeleteId(null);
-            closeDropdown();
-        }
+    const handleDelete = (id) => {
+        showConfirm({
+            title: "Hapus Artikel",
+            message: "Apakah kamu yakin ingin menghapus artikel ini?",
+            onConfirm: async () => {
+                try {
+                    await deleteArticle(id);
+                    showToast("Artikel berhasil dihapus", "success");
+                    closeDropdown();
+                } catch (error) {
+                    showToast("Terjadi kesalahan saat menghapus artikel", "error");
+                }
+            },
+        });
     };
 
 
     return (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div
+            className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
                 <div className="min-w-fit">
                     <Table>
                         <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                             <TableRow>
-                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Title</TableCell>
-                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Status</TableCell>
-                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Action</TableCell>
+                                <TableCell isHeader
+                                           className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Title</TableCell>
+                                <TableCell isHeader
+                                           className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Status</TableCell>
+                                <TableCell isHeader
+                                           className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Action</TableCell>
                             </TableRow>
                         </TableHeader>
 
@@ -89,8 +84,10 @@ export default function ArticleTable() {
                                                 />
                                             </div>
                                             <div>
-                                                <span className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.title}</span>
-                                                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{item.author}</span>
+                                                <span
+                                                    className="block font-medium text-gray-800 line-clamp-2 text-theme-sm dark:text-white/90">{item.title}</span>
+                                                <span
+                                                    className="block text-gray-500 text-theme-xs dark:text-gray-400">{item.author}</span>
                                             </div>
                                         </div>
                                     </TableCell>
@@ -116,7 +113,8 @@ export default function ArticleTable() {
                                                 onClick={() => toggleDropdown(item.id)}
                                                 className="dropdown-toggle"
                                             >
-                                                <EllipsisVertical className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
+                                                <EllipsisVertical
+                                                    className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"/>
                                             </button>
                                             <Dropdown
                                                 isOpen={openDropdownId === item.id}

@@ -1,13 +1,13 @@
 "use client";
 
 import { Header } from "@/app/_components";
-import React, { useEffect } from "react";
+import {getModalComponent} from "@/data";
+import {useModal} from "@/app/_hooks/useModal";
 import useAuthStore from "@/app/_stores/authStore";
+import useToastStore from "@/app/_stores/toastStore";
 import Footer from "@/app/_components/Footer";
 import CustomToast from "@/app/_components/Toast/CustomToast";
-import useToastStore from "@/app/_stores/toastStore";
-import {useModal} from "@/app/_hooks/useModal";
-import {getModalComponent} from "@/data";
+import ConfirmDialog from "@/app/_components/Toast/ConfirmDialog";
 
 export const UserLayout = ({ children }) => {
     const { toast, hideToast } = useToastStore();
@@ -17,6 +17,7 @@ export const UserLayout = ({ children }) => {
 
     return (
         <div>
+            <ConfirmDialog />
             <CustomToast
                 isOpen={toast.isOpen}
                 message={toast.message}

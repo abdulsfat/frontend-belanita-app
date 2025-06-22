@@ -12,26 +12,12 @@ export const deleteUser = async (id) => {
     return response.data;
 };
 
-export const updateProfile = async (token, data) => {
-    const formData = new FormData();
-
-    for (const key in data) {
-        formData.append(key, data[key]);
-    }
-
-    formData.append("_method", "PUT");
-
-    const res = await axios.post(
-        `${API_BASE_URL}/user/profile`,
-        formData,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
-            },
-        }
-    );
-
+export const updateProfile = async (token, payload) => {
+    const res = await axios.put(`${API_BASE_URL}/user/profile`, payload, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+    });
     return res.data.data;
 };
-
