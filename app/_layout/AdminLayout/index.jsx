@@ -1,14 +1,15 @@
 "use client";
-import React, {useEffect} from "react";
+
 import { useSidebar } from "@/app/_context/SidebarContext";
-import AppSidebar from "@/app/_components/Admin/layout/AppSidebar";
+import {getModalComponent} from "@/data";
+import {useModal} from "@/app/_hooks/useModal";
+import useToastStore from "@/app/_stores/toastStore";
+import useAuthStore from "@/app/_stores/authStore";
 import Backdrop from "@/app/_components/Admin/layout/Backdrop";
 import AppHeader from "@/app/_components/Admin/layout/AppHeader";
 import CustomToast from "@/app/_components/Toast/CustomToast";
-import useToastStore from "@/app/_stores/toastStore";
-import {getModalComponent} from "@/data";
-import {useModal} from "@/app/_hooks/useModal";
-import useAuthStore from "@/app/_stores/authStore";
+import AppSidebar from "@/app/_components/Admin/layout/AppSidebar";
+import ConfirmDialog from "@/app/_components/Toast/ConfirmDialog";
 
 
 export default function AdminLayout({ children }) {
@@ -25,6 +26,7 @@ export default function AdminLayout({ children }) {
 
     return (
         <div className="min-h-screen xl:flex dark:bg-gray-900">
+            <ConfirmDialog />
             <CustomToast
                 isOpen={toast.isOpen}
                 message={toast.message}

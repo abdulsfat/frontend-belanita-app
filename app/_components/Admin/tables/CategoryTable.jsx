@@ -20,38 +20,36 @@ import useEmergencyStore from "@/app/_stores/emergencyStore";
 import useAuthStore from "@/app/_stores/authStore";
 import useMerchandiseStore from "@/app/_stores/merchandiseStore";
 import {useRouter} from "next/navigation";
+import useConfirmStore from "@/app/_stores/confirmStore";
 
 export default function CategoryTable() {
     const { categories, fetchCategories, deleteCategories } = useMerchandiseStore();
     const { toast, showToast, hideToast } = useToastStore();
-    const [confirmDeleteId, setConfirmDeleteId] = useState(null);
     const [openDropdownId, setOpenDropdownId] = useState(null);
-    const { user, token } = useAuthStore();
     const router = useRouter();
-
+    const showConfirm = useConfirmStore((state) => state.showConfirm);
 
     useEffect(() => {
         fetchCategories();
     }, []);
 
-
-    const handleDelete = async (id) => {
-        if (confirmDeleteId !== id) {
-            setConfirmDeleteId(id);
-            showToast("Klik lagi untuk konfirmasi hapus", "error");
-            return;
-        }
-
-        try {
-            await deleteCategories(id);
-            showToast("Artikel berhasil dihapus", "success");
-        } catch (error) {
-            showToast("Terjadi kesalahan saat menghapus artikel", "error");
-        } finally {
-            setConfirmDeleteId(null);
-            closeDropdown();
-        }
+    const handleDelete = (id) => {
+        showConfirm({
+            title: "Hapus Kategori",
+            message: "Apakah kamu yakin ingin menghapus kategori ini?",
+            onConfirm: async () => {
+                try {
+                    await deleteCategories(id);
+                    showToast("Kategori berhasil dihapus", "success");
+                    closeDropdown();
+                    fetchCategories();
+                } catch (error) {
+                    showToast("Terjadi kesalahan saat menghapus kategori", "error");
+                }
+            },
+        });
     };
+
 
     const toggleDropdown = (id) => {
         setOpenDropdownId((prev) => (prev === id ? null : id));
@@ -129,7 +127,7 @@ export default function CategoryTable() {
                                                     onItemClick={() => handleDelete(item.id)}
                                                     className="flex w-full font-normal text-left text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-white/5 dark:hover:text-red-400"
                                                 >
-                                                    {confirmDeleteId === item.id ? "Klik lagi untuk hapus" : "Delete"}
+                                                    Delete
                                                 </DropdownItem>
                                             </Dropdown>
                                         </div>

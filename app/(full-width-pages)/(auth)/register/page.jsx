@@ -16,7 +16,7 @@ export default function RegisterPage() {
                 <div className="w-full max-w-md p-6 bg-white rounded-2xl shadow-md">
                     <div className="flex justify-center">
                         <img
-                            src="/Logo.png"
+                            src="/logo.png"
                             alt="Logo"
                             className="h-16 w-16 object-contain"
                         />

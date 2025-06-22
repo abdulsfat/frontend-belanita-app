@@ -27,7 +27,7 @@ export default function Merchendise() {
             {/* Banner */}
             <div className="w-full mx-auto">
                 <img
-                    src="/complaints.png"
+                    src="/merch-hero.jpg"
                     alt="We Will Not Be Silenced"
                     className="rounded-3xl shadow-lg w-full h-64 sm:h-80 md:h-[28rem] lg:h-[32rem] object-cover mb-10 transition-all"
                 />

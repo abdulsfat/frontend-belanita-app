@@ -9,7 +9,6 @@ import {
     TableRow,
     Table,
 } from "@/app/_components/Admin/ui/table";
-import {getComplaintById} from "@/app/_services/complaintService";
 import {EllipsisVertical} from "lucide-react";
 import {useState} from "react";
 import {useModal} from "@/app/_hooks/useModal";
@@ -19,16 +18,17 @@ import useAuthStore from "@/app/_stores/authStore";
 import Badge from "@/app/_components/Admin/ui/badge/Badge";
 import moment from "moment/moment";
 import {useRouter} from "next/navigation";
+import useConfirmStore from "@/app/_stores/confirmStore";
 
 
 export default function ComplaintTable() {
-    const {complaints, deleteComplaint} = useComplaintStore();
+    const {complaints, fetchComplaints, deleteComplaint} = useComplaintStore();
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const {isOpen, openModal, closeModal} = useModal();
     const {showToast} = useToastStore();
-    const { user } = useAuthStore();
+    const {user} = useAuthStore();
     const router = useRouter();
-
+    const showConfirm = useConfirmStore((state) => state.showConfirm);
 
     const toggleDropdown = (id) => {
         setOpenDropdownId((prev) => (prev === id ? null : id));
@@ -38,15 +38,21 @@ export default function ComplaintTable() {
         setOpenDropdownId(null);
     };
 
-
-    // FIXED
-    const handleDelete = async (id) => {
-        try {
-            await deleteComplaint(id);
-            showToast("Data berhasil dihapus", "success");
-        } catch (err) {
-            showToast("Gagal menghapus data", "error");
-        }
+    const handleDelete = (id) => {
+        showConfirm({
+            title: "Hapus Complaint",
+            message: "Apakah kamu yakin ingin menghapus complaint ini?",
+            onConfirm: async () => {
+                try {
+                    await deleteComplaint(id);
+                    showToast("Complaint berhasil dihapus", "success");
+                    closeDropdown();
+                    fetchComplaints();
+                } catch (error) {
+                    showToast("Terjadi kesalahan saat menghapus complaint", "error");
+                }
+            },
+        });
     };
 
     return (
@@ -67,7 +73,8 @@ export default function ComplaintTable() {
                                         Date
                                     </TableCell>
                                     {user?.role === "admin" && (
-                                        <TableCell isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
+                                        <TableCell isHeader
+                                                   className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
                                             Pengadu
                                         </TableCell>
                                     )}
@@ -80,7 +87,8 @@ export default function ComplaintTable() {
                                         Status
                                     </TableCell>
                                     {user?.role === "admin" && (
-                                        <TableCell isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
+                                        <TableCell isHeader
+                                                   className="px-5 py-3 text-start text-theme-xs text-gray-500 font-medium">
                                             Status Tanggapan
                                         </TableCell>
                                     )}
@@ -170,7 +178,6 @@ export default function ComplaintTable() {
                                                     >
                                                         Detail
                                                     </DropdownItem>
-
 
 
                                                     <DropdownItem

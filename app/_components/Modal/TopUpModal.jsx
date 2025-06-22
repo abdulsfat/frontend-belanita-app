@@ -32,19 +32,16 @@ export default function TopUpModal({ isOpen, onClose, showToast }) {
             return;
         }
 
-        // Tampilkan QR code dulu
         setIsProcessing(true);
 
         setTimeout(async () => {
             try {
-                console.log("[TopUp] Nominal Top Up:", nominal);
                 await updateProfile(token, { balance: nominal });
                 await refreshUserProfile();
                 showToast("Saldo berhasil ditambahkan!", "success");
                 onClose();
                 handleReset();
             } catch (error) {
-                console.error("[TopUp] Error saat top up:", error);
                 showToast("Gagal menambahkan saldo.", "error");
             } finally {
                 setIsProcessing(false);

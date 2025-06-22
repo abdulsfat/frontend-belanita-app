@@ -2,7 +2,7 @@ import { create } from "zustand";
 import {
     getAllComplaints,
     deleteComplaintById,
-    submitFeedback
+    submitFeedback, createComplaint
 } from "@/app/_services/complaintService";
 import * as complaintService from "@/app/_services/complaintService";
 
@@ -22,6 +22,18 @@ const useComplaintStore = create((set, get) => ({
             set({ complaints: [] });
         } finally {
             set({ isLoading: false });
+        }
+    },
+
+    createComplaint: async (token, formData) => {
+        try {
+            const newComplaint = await createComplaint(token, formData);
+            set((state) => ({
+                complaints: [...state.complaints, newComplaint],
+            }));
+        } catch (error) {
+            console.error("Gagal membuat complaint:", error);
+            throw error;
         }
     },
 
