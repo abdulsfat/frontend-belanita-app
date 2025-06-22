@@ -20,6 +20,21 @@ export const getComplaintById = async (id) => {
     return response.data.data;
 };
 
+export const createComplaint = async (token, formData) => {
+    const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/complaint`,
+        formData,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+            },
+        }
+    );
+
+    return response.data.data;
+};
+
 
 export const deleteComplaintById = async (id) => {
     const response = await axios.delete(`${API_BASE_URL}/complaint/${id}`);

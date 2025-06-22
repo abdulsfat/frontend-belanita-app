@@ -7,7 +7,6 @@ export function ProgressBar({
 		<div className="flex justify-between mb-4 gap-2 items-center w-full">
 			{Array.from({ length: topNewsLength }).map((_, i) => (
 				<div key={i} className="relative w-full">
-					{/* This div creates a larger clickable/hoverable area */}
 					<div className="absolute inset-0 py-2 mt-0 flex items-center justify-center">
 						<div className="h-[2px] w-full rounded-full bg-white/30 relative">
 							{i === currentIndex && (

@@ -12,23 +12,34 @@ import Badge from "@/app/_components/Admin/ui/badge/Badge";
 import { Trash} from "lucide-react";
 import useToastStore from "@/app/_stores/toastStore";
 import useUsersStore from "@/app/_stores/userStore";
+import useConfirmStore from "@/app/_stores/confirmStore";
 
 export default function UsersTable() {
-    const { users, fetchUsers, deleteuser } = useUsersStore();
+    const { users, fetchUsers, deleteUser } = useUsersStore();
     const { toast, showToast, hideToast } = useToastStore();
+    const showConfirm = useConfirmStore((state) => state.showConfirm);
+
 
 
     useEffect(() => {
         fetchUsers();
     }, []);
 
-    const handleDelete = async (id) => {
-        try {
-            await deleteuser(id);
-            showToast("Data berhasil dihapus", "success");
-        } catch {
-            showToast("Gagal menghapus data", "error");
-        }
+
+    const handleDelete = (id) => {
+        showConfirm({
+            title: "Hapus User",
+            message: "Apakah kamu yakin ingin menghapus user ini?",
+            onConfirm: async () => {
+                try {
+                    await deleteUser(id);
+                    showToast("User berhasil dihapus", "success");
+                    fetchUsers();
+                } catch (error) {
+                    showToast("Terjadi kesalahan saat menghapus user", "error");
+                }
+            },
+        });
     };
 
     return (

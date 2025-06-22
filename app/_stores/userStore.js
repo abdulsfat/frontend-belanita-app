@@ -30,7 +30,7 @@ const useUsersStore = create((set, get) => ({
         }
     },
 
-    deleteuser: async (id) => {
+    deleteUser: async (id) => {
         try {
             await deleteUser(id);
             set((state) => ({

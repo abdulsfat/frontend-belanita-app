@@ -2,8 +2,8 @@ import {UserLayout} from "@/layout";
 
 
 export const metadata = {
-    title: "Halaman User",
-    description: "User view",
+    title: "Belanita • Championing Women’s Rights",
+    description: "Empowering Voices, Ensuring Equality for a Just and Inclusive Future.",
 };
 
 export default function Layout({ children }) {
