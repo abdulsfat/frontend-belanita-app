@@ -46,7 +46,6 @@ export default function MerchandiseEditPage() {
       const fetchCategories = async () => {
         try {
           const categoriesData = await getCategories();
-          console.log("Kategori berhasil diambil:", categoriesData);
           setCategories(categoriesData);
         } catch (error) {
           console.error("Gagal mengambil kategori:", error);
@@ -85,8 +84,6 @@ export default function MerchandiseEditPage() {
       showToast("Merchandise berhasil diperbarui", "success");
       setTimeout(() => {
         router.push("/dashboard/catalog");
-        console.log("Slug yang dikirim:", slug);
-        console.log("Data yang dikirim:", Object.fromEntries(formData));
       }, 1500);
     } catch (error) {
       showToast(error?.response?.data?.message || "Gagal memperbarui merchandise", "error");

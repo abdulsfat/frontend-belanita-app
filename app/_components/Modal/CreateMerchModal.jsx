@@ -77,7 +77,6 @@ export default function CreateMerchModal({ isOpen, onClose, showToast }) {
 
         try {
             for (let pair of payload.entries()) {
-                console.log(`${pair[0]}:`, pair[1]);
             }
             await createMerchandise(payload);
             await fetchMerchandises();

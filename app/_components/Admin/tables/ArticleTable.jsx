@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { EllipsisVertical } from "lucide-react";
 import useToastStore from "@/app/_stores/toastStore";
 import useArticleStore from "@/app/_stores/articleStore";
+import SafeImage from "@/app/_components/Admin/common/SafeImage";
 
 export default function ArticleTable() {
     const router = useRouter();
@@ -80,7 +81,7 @@ export default function ArticleTable() {
                                     <TableCell className="px-5 py-4 sm:px-6 text-start">
                                         <div className="flex items-center gap-3">
                                             <div className="max-w-full me-2 overflow-hidden">
-                                                <Image
+                                                <SafeImage
                                                     width={100}
                                                     height={80}
                                                     src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.image}`}

@@ -1,7 +1,5 @@
 import { create } from "zustand";
-import { updateArticle} from "@/app/_services/articleService";
 import {deleteUser, getAllUsers, updateProfile} from "@/app/_services/userService";
-import useAuthStore from "@/app/_stores/authStore";
 
 const useUsersStore = create((set, get) => ({
     users: [],
@@ -22,23 +20,10 @@ const useUsersStore = create((set, get) => ({
         }
     },
 
-
-    // createUsers: async (formData) => {
-    //     try {
-    //         const newArticle = await createUsers(formData);
-    //         set((state) => ({
-    //             users: [...state.users, newArticle],
-    //         }));
-    //     } catch (error) {
-    //         console.error("Gagal membuat users:", error);
-    //         throw error;
-    //     }
-    // },
-
     updateUser: async (token, formData) => {
         try {
             const response = await updateProfile(token, formData);
-            return response; // langsung return user updated (bukan update array `users`)
+            return response;
         } catch (err) {
             console.error("Gagal update profile:", err);
             throw err;

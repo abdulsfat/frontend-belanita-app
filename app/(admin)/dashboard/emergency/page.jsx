@@ -4,7 +4,7 @@ import React, {useEffect} from "react";
 import PageBreadcrumb from "@/app/_components/Admin/common/PageBreadCrumb";
 import ComponentCard from "@/app/_components/Admin/common/ComponentCard";
 import useEmergencyStore from "@/app/_stores/emergencyStore";
-import EmergencyTable from "@/app/_components/Admin/tables/emergency";
+import EmergencyTable from "@/app/_components/Admin/tables/EmergencyTable";
 
 export default function ListComplaint() {
     const { fetchEmergencies } = useEmergencyStore();

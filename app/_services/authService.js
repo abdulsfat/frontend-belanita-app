@@ -40,7 +40,6 @@ export const restoreAuth = () => {
     const { token } = useAuthStore.getState();
     if (token) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        axios.defaults.headers.common["Content-Type"] = "application/json"; // ✅ ini penting
-        console.log("✅ Token restored:", token);
+        axios.defaults.headers.common["Content-Type"] = "application/json";
     }
 };

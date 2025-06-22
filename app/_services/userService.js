@@ -7,13 +7,21 @@ export const getAllUsers = async (token) => {
     return response.data.data;
 };
 
-export const deleteUser = async (id, token) => {
+export const deleteUser = async (id) => {
     const response = await axios.delete(`${API_BASE_URL}/users/${id}`);
     return response.data;
 };
 
-export const updateProfile = async (token, formData) => {
-    const res = await axios.put(
+export const updateProfile = async (token, data) => {
+    const formData = new FormData();
+
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+
+    formData.append("_method", "PUT");
+
+    const res = await axios.post(
         `${API_BASE_URL}/user/profile`,
         formData,
         {
@@ -23,5 +31,7 @@ export const updateProfile = async (token, formData) => {
             },
         }
     );
+
     return res.data.data;
 };
+

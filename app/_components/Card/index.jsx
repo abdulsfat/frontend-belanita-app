@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { formatDate } from "@/app/_utils/dateFormatter";
+import SafeImage from "@/app/_components/Admin/common/SafeImage";
 
 export function Card({
 						 image,
@@ -20,8 +20,8 @@ export function Card({
 			<div className="w-full mt-8 lg:mt-5 cursor-pointer relative group">
 				{/* Gambar */}
 				<div className="relative h-60 overflow-hidden rounded-3xl transition-transform duration-500 ease-outquint-ease group-hover:brightness-95 group-hover:scale-[0.98]">
-					<Image
-						layout="fill"
+					<SafeImage
+						fill
 						src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${image}`}
 						alt="Card Image"
 						className="object-cover"

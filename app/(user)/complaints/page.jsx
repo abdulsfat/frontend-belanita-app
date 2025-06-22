@@ -37,7 +37,6 @@ export default function Complaints() {
     formData.append("phone", form.phone);
     formData.append("location", form.location);
     formData.append("image", form.image);
-    console.log("Form Data:", form);
     try {
       const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/complaint`,

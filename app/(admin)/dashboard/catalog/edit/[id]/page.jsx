@@ -44,7 +44,7 @@ export default function MerchEditPage() {
 
     useEffect(() => {
         const loadData = async () => {
-            await fetchMerchandises(); // fetch tanpa kondisi
+            await fetchMerchandises();
             await fetchCategories();
             setFetching(false);
         };
@@ -65,12 +65,6 @@ export default function MerchEditPage() {
         }
     }, [merchandise]);
 
-
-
-    useEffect(() => {
-        console.log("Semua merchandises:", merchandises);
-        console.log("Param id:", id);
-    }, [merchandises, id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

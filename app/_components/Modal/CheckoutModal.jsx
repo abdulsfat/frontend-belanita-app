@@ -6,6 +6,7 @@ import Button from "@/app/_components/Admin/ui/button/Button";
 import {orderMerchandise} from "@/app/_services/merchService";
 import useAuthStore from "@/app/_stores/authStore";
 import {Modal} from "@/app/_components/Admin/ui/modal";
+import useToastStore from "@/app/_stores/toastStore";
 
 export default function CheckoutModal({
                                           isOpen,
@@ -14,10 +15,11 @@ export default function CheckoutModal({
                                           user,
                                           refetchMerch,
                                       }) {
-    const [quantity, setQuantity] = useState(1)
+    const [quantity, setQuantity] = useState(1);
     const [error, setError] = useState("");
-    const {token} = useAuthStore();
+    const { token } = useAuthStore();
     const refreshUserProfile = useAuthStore((state) => state.refreshUserProfile);
+    const { showToast } = useToastStore();
 
     useEffect(() => {
         if (isOpen) setError("");
@@ -39,12 +41,19 @@ export default function CheckoutModal({
     const handleOrderConfirm = async () => {
         try {
             if (!token) {
-                alert("Silakan login terlebih dahulu.");
+                showToast("Silakan login terlebih dahulu.", "error");
                 return;
             }
 
             if (quantity < 1 || quantity > merch.stock) {
-                alert("Jumlah pesanan tidak valid.");
+                showToast("Jumlah pesanan tidak valid.", "error");
+                return;
+            }
+
+            const totalPrice = quantity * merch.price;
+
+            if (user.balance < totalPrice) {
+                showToast("Saldo Anda tidak cukup untuk melakukan pembelian ini.", "error");
                 return;
             }
 
@@ -60,15 +69,16 @@ export default function CheckoutModal({
                 await refetchMerch();
             }
 
-            alert("Pesanan berhasil dibuat!");
+            showToast("Pesanan berhasil dibuat!", "success");
             onClose();
         } catch (error) {
             console.error("Gagal order:", error.response?.data || error.message);
-            alert("Gagal melakukan pesanan.");
+            showToast("Gagal melakukan pesanan.", "error");
         }
     };
 
-    console.log("duittt", user.balance)
+
+
     const totalPrice = quantity * merch.price;
 
     if (!isOpen || !merch) return null;
@@ -143,7 +153,6 @@ export default function CheckoutModal({
                     </Button>
                 </div>
             </div>
-
         </Modal>
     );
 }

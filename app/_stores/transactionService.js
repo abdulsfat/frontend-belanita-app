@@ -22,7 +22,6 @@ const useTransactionStore = create((set) => ({
     updateStatus: async (token, id, status) => {
         try {
             const updated = await updateTransactionStatus(token, id, status);
-            console.log("✅ Updated from server:", updated); // pindah ke sini
 
             set((state) => ({
                 transactions: state.transactions.map((e) =>
@@ -30,7 +29,7 @@ const useTransactionStore = create((set) => ({
                 ),
             }));
         } catch (error) {
-            console.error("❌ Gagal update status:", error);
+            console.error("Gagal update status:", error);
             throw error;
         }
     },
