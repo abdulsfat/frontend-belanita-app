@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Badge from "@/app/_components/Admin/ui/badge/Badge";
 import {Dropdown} from "@/app/_components/Admin/ui/dropdown/Dropdown";
 import {DropdownItem} from "@/app/_components/Admin/ui/dropdown/DropdownItem";
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import {
     TableBody,
     TableCell,
@@ -138,7 +137,7 @@ export default function ArticleTable() {
                                                     onItemClick={() => handleDelete(item.id)}
                                                     className="flex w-full font-normal text-left text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-white/5 dark:hover:text-red-400"
                                                 >
-                                                    {confirmDeleteId === item.id ? "Klik lagi untuk hapus" : "Delete"}
+                                                    Delete
                                                 </DropdownItem>
                                             </Dropdown>
                                         </div>
